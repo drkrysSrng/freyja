@@ -1,5 +1,4 @@
 #!/bin/python3
-
 import math
 
 def entropy_check(string):
