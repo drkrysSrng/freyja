@@ -1,3 +1,12 @@
 venv
 .idea
-javascript-malware-collection
+doc/tfm_obfuscation.aux
+doc/tfm_obfuscation.lof
+doc/tfm_obfuscation.log
+doc/tfm_obfuscation.lol
+doc/tfm_obfuscation.out
+doc/tfm_obfuscation.synctex.gz
+doc/tfm_obfuscation.toc
+samples/master_example
+samples/simple_js_malware_code
+samples/*.js

@@ -23,7 +23,7 @@
 \definecolor{jpurple}{rgb}{0.5,0,0.35}
 \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
 \usepackage{listings}
-\renewcommand\lstlistingname{Code}
+\renewcommand\lstlistingname{Código}
 \renewcommand{\lstlistlistingname}{Código Fuente}
 \newcommand{\estiloR}{
 	\lstset{ %
@@ -64,11 +64,9 @@
 	\begin{figure}[ht]
 		\minipage{0.50\textwidth}
 		\includegraphics[width=4cm]{images/logo.png}
-		\label{EscudoCampus}
 		\endminipage
 		\minipage{0.50\textwidth}
 		\includegraphics[width=8cm]{images/logo_uni.png}
-		\label{Escudo}
 		\endminipage
 	\end{figure}
 	
@@ -80,7 +78,6 @@
 		\vspace{0.8cm}
 		\centering
 		\includegraphics[width=7cm]{images/front1.jpeg}
-		\label{Logo}
 		
 		
 		\vspace{0.5cm}
@@ -126,13 +123,21 @@
 	\subsection{En qué consiste la ofuscación}
 	Tanto para proteger la propiedad intelectual o intercambiar secretos, además de prevenir la ingeniería inversa de una aplicación software, el código fuente se suele ofuscar.
 	
-	Una forma de ofuscación es encriptar parte del código fuente. Un ofuscador es una herramienta que convierte el código fuente de un programa en otro código distinto que hace lo mismo pero de una forma mucho más difícil de leer y entender.
+	Una forma de ofuscación es cambiar parte del código fuente, para dificultar su lectura, comprensión y su análisis. Un ofuscador es una herramienta que convierte el código fuente de un programa en otro código distinto que hace lo mismo pero de una forma mucho más difícil de leer y entender.
 	
 	Además, también es una de las muchas formas que tiene el malware para evadir el análisis estático o para evitar ser detectado por los métodos tradicionales anti-malware que se basan en hashes o firmas y strings para su detección.
 	
 	Los antivirus tradicionales hacen sus análisis para detectar el malware, normalmente comparando el hash del fichero que están analizando con los hashes que tienen en sus Base de Datos, en el caso de un analista, sería por ejemplo, compararlo con los hashes en la base de datos de \href{https://www.virustotal.com/gui/}{Virus Total} \cite{virustotal}. 
 	
-	Otro método de análisis de código suele basarse en analizar strings. Consiste en buscar y analizar strings legibles de texto (en ASCII o Unicode) en un fichero que puede que no tenga caracteres legibles, porque sea un binario, por ejemplo. Esos strings de texto, pueden mostrarnos nombres de ficheros, IPs, URL, peticiones HTTP, claves de registro u otras cadenas que nos puedan indicar cómo funciona dicho malware.
+	Otro método de análisis de código suele basarse en analizar strings. Consiste en buscar y analizar strings legibles de texto (en ASCII o Unicode) en un fichero que puede que no tenga caracteres legibles, porque sea un binario, por ejemplo. Esos strings de texto, pueden mostrarnos nombres de ficheros, IPs, URL, peticiones HTTP, claves de registro u otras cadenas que nos puedan indicar cómo funciona dicho malware. 
+	
+	Herramientas como YARA permiten realizar búsquedas programáticas sobre texto con el fin de realizar detecciones basadas en reglas. En el siguiente ejemplo, tenemos una regla YARA que busca tres patrones de texto:\cite{yara}
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=10cm]{images/yara.png}
+		\caption{Ejemplo de reglas Yara para buscar tres strings}
+	\end{figure}
 	
 	
 	\newpage
@@ -142,26 +147,47 @@
 		\centering
 		\includegraphics[width=14cm]{images/history.jpeg}
 		\caption{Diagrama histórico}
-		\label{fig:1}
 	\end{figure}
 
 	\newpage
 
-	\section{Tipos de Ofuscación de Malware}
+	\section{Tipos de Ofuscación de malware}
 	\subsection{Packing}
-	Se comprime el fichero para que tenga una firma distinta al original. Además de eso, también los strings también serán incomprensibles. También puede incluso comprimirse el binario con software para hacerlo más pequeño. El ejecutable comprimido se empaca dentro del código requerido para descomprimirlo en tiempo de ejecución, luego la ejecución se hace en memoria.Este tipo de ofuscación lo utilizan Malware como Redline Stealer \cite{redlinestealer} y Hancitor \cite{hancitor}
+	Se comprime el fichero para que tenga una firma distinta al original. Además de eso, también los strings también serán incomprensibles. También puede incluso comprimirse el binario con software para hacerlo más pequeño. El ejecutable comprimido se empaca dentro del código requerido para descomprimirlo en tiempo de ejecución, luego la ejecución se hace en memoria.Este tipo de ofuscación lo utilizan malware como Redline Stealer \cite{redlinestealer} y Hancitor \cite{hancitor}
+	
+	Sin embargo, el hecho de que un programa esté empaquetado, ya es sospechoso, por lo que el malware moderno trata de no utilizar este sistema para pasar desapercibido.
+	
 	
 	\subsection{Dead-Code Insertion}
-	Es una forma simple de cambiar la apariencia del programa y su funcionalidad. \textbf{\textit{NOP}} es un ejemplo de comando en ensamblador. El código original se ofusca fácilmente insertando instrucciones \textbf{\textit{NOP}}. Los análisis basados en firma podrían detectarlo simplemente eliminando esta instrucción.
+	Es una forma simple de cambiar la apariencia del programa y su funcionalidad. \textbf{\textit{NOP}} es un ejemplo de comando en ensamblador. El código original se ofusca fácilmente insertando instrucciones \textbf{\textit{NOP}}. Los análisis basados en firma podrían detectarlo simplemente eliminando esta instrucción. \footnote{NOP significa en x86 o en intel \textit{no operation}}
 	
 	\textbf{\textit{NOP}} no hace nada. La ejecución continúa en la siguiente instrucción. Ningún registro ni flag es afectado por eta instrucción, simplemente se genera un delay en la ejecución o una reserva de espacio en memoria.
+	
+	También, podemos ver encadenamiento de instrucciones como if-else o inserción de código que afecta en nada al programa.
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Dead-Code Insertion}, language={[x86masm]Assembler}]
+			; Before obfuscation
+			xor eax, eax
+			move eax, 0x2D
+			mov ecx, 0xA
+			; After obfuscation
+			xor eax, eax
+			move eax, 0x2D
+			nop
+			nop
+			mov ecx, 0xA
+		\end{lstlisting}
+	\end{scriptsize}
+	
 	
 	\subsection{XOR} 
 	Este método es bastante polpular para ocultar datos y que no puedan ser analizados. Lo que hace es intercambiar los contenidos de dos varibles dentro del código, como por ejemplo:
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de XOR}, label=lst:rcode, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de XOR}, language={[x86masm]Assembler}]
 			XOR EBX, EAX
 			XOR EAX, EBX
 			XOR EBX, EAX
@@ -172,7 +198,7 @@
 	Es otra técnica simple que cambia registros por cada generación mientras el código del programa y su comportamiento siguen igual. En el siguiente código, se cambian los registros al inicio y se vuelven a cambiar al final, dejando la funcionalidad como estaba. El malware W95/Regswap \cite{regswap}
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Reasignamiento de registro}, label=lst:rcode, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de Reasignamiento de registro}, language={[x86masm]Assembler}]
 			; Before obfuscation
 			mv eax ecx
 			xor ebx, ebx
@@ -183,14 +209,12 @@
 			test ebx, eax
 		\end{lstlisting}
 	\end{scriptsize}
-	\subsection{Subroutine reordering}
-	Ofusca el código original reemplazando instrucciones con otras equivalentes.
 	
 	\subsection{Instruction Substitution}
 	Hay una gran variedad de sustituciones que se pueden introducir. A continuación vemos un código en el que se sustituye la instrucción \textit{push eax; mov eax, ebx} con \textit{push eax; push ebx; pop eax}. Semánticamente son equivalentes pero \textit{push} y \textit{pop} es más lento que escribir directamente en el registro con \textit{mov}. Esta técnica se utiliza en el malware W95/Zmist \cite{zmist}, y también en malware avanzados como Evol, MetaPHOR \cite{metaphor}, Zperm \cite{zperm} y Avron\cite{avron}.
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de sustitución de instrucciones}, label=lst:rcode, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de sustitución de instrucciones}, language={[x86masm]Assembler}]
 			; Before obfuscation
 			add eax, 05H
 			mov ebx eax
@@ -203,7 +227,7 @@
 	\end{scriptsize}
 
 	\subsection{Base64}
-	Es una forma de ofuscación muy conocida. Básicamente consiste en un esquema de codificación de caracteres, con el caracter \textit{=} como padding. El afabeto incluye desde la a-z, A-Z, + / y los caracteres numéricos del 0-9. La codificación funciona encadenando 3 caracteres para generar una cadena de 24 bits, que luego se divide en cuatro fragmentos de 6 bits, cadauno de los cuales se traduce a uno de los caracteres Base64.
+	Es una forma de ofuscación muy conocida. Básicamente consiste en un esquema de codificación de caracteres, con el carácter \textit{=} como padding. El afabeto incluye desde la a-z, A-Z, + / y los caracteres numéricos del 0-9. La codificación funciona encadenando 3 caracteres para generar una cadena de 24 bits, que luego se divide en cuatro fragmentos de 6 bits, cada uno de los cuales se traduce a uno de los caracteres Base64. A pesar de ser una técnica trivial, es ampliamente utilizada, sobre todo para ofuscar cadenas.
 	
 	
 	\subsection{Code Transposition}
@@ -212,9 +236,29 @@
 		\item La primera técnica, cambia las instrucciones de forma aleatoria y luego inserta ramas incondicionales o saltos para restaurar la ejecución original. No es difícil detectar este método porque el programa original se puede restaurar eliminando las ramas incondiconales o saltos.
 		\item La segunda técnica crea nuevo código eligiendo y reordenando las instrucciones que son independientes entre ellas, es una técnica difícil de implementar, pero hace que la detección sea más difícil.
 	\end{itemize}
+
+	\subsubsection{Subroutine reordering}
+	También conocido como Block Reordering, es una técnica que reordena el flujo del proceso cambiando bloques del código que tienen subrutinas independientes. Si un código tiene n subrutinas de código, tendrá \verb*|n!| permutaciones para reordenar dicho código.
+	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Code Cransposition, Subroutine Redordering and Garbage Code}, label=lst:rcode, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de sustitución de subroutine reordering}, language={[x86masm]Assembler}]
+			; Before obfuscation
+			mov eax , ebx
+			add ecx , edx
+			add eax , ecx
+			
+			; After obfuscation
+			add ecx , edx
+			mov eax , ebx
+			add eax , ecx
+			
+		\end{lstlisting}
+	\end{scriptsize}
+
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Code Cransposition, Subroutine Redordering and Garbage Code}, language={[x86masm]Assembler}]
 			; Before obfuscation
 			mov eax, ecx
 			mov ebx, 10
@@ -235,6 +279,7 @@
 			F3: mul ebx
 		\end{lstlisting}
 	\end{scriptsize}
+
 	\subsection{Code integration}
 	Fue por primera vez visto en W95/Zmist \cite{zmist}, le indica al código malicioso, unirse al código del programa objetivo, el malware decompila el programa e inyecta el código y lo reensambla para poder utilizarlo.
 	
@@ -243,7 +288,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de expresiones MBA equivalentes}, label=lst:rcode, language={python}]
+		\begin{lstlisting}[caption={Ejemplo de expresiones MBA equivalentes}, language={python}]
 			def e1(x, y):
 				return x + y
 			
@@ -267,7 +312,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de expresiones Opacas equivalentes}, label=lst:rcode, language={python}]
+		\begin{lstlisting}[caption={Ejemplo de expresiones Opacas equivalentes}, language={python}]
 			
 			def o1():
 				x = 5
@@ -319,11 +364,10 @@
 		\centering
 		\includegraphics[width=4cm]{images/EPO.png}
 		\caption{Entry Point Obscuration (EPO)}
-		\label{fig:2}
 	\end{figure}
 	
 	
-	\subsection{Oligomorphism}
+	\subsection{Oligomorfismo}
 	
 	Comenzó como una forma de evadir las técnicas de escaneo basadas en firma. Para evitar esto, tenemos las técnicas de escaneo tales como Wildcard y Mismatch. Teniendo en cuenta que el código de la infección suele estar añadido a un fichero, escaneos Top-and-Tail pueden ser efectivos para extraer las firmas de alguas partes del código. Además, el uso de emuladores ver cómo se extrae el malware y que el emuladdor monitoree la memoria y el código que se dumpea. El primer malware Oligomórfico fue Whale DOS \cite{whale}, identificado por primera vez en 1990. En la siguiente imagen, la rutina de desencriptado se utiliza para desencriptar el body y evitar la detección del malware.
 	
@@ -331,13 +375,12 @@
 		\centering
 		\includegraphics[width=9cm]{images/oligomorphism.png}
 		\caption{Malware Oligomórfico y Metamórfico}
-		\label{fig:3}
 	\end{figure}	
 
 	La limitación de esta técnica, es que el bucle de posibles descifradores es finito. Por ejemplo el W95/Memorial \cite{memorial} tiene exactamente 96 desencriptadores para elegir. Una vez que se agota un generador oligomórfico, la única solución es introducir ofuscación en la Rutina de Desencriptado y así tendremos una forma infinita de rutinas de desencriptado dando lugar al malware de tipo Polimórfico. Dando lugar a la primera generación de malware Polimórfico como 1260 \cite{1260} y famosos generadores como Phalcon/Skism Mass-Produced Code Generator (PS-MPC) \cite{psmpc} y Virus Creation Lab (VCL)\cite{vcl} que se siguen utilizando actualmente.
 	
-	\subsection{Polymorphism}
-	Este malware es capaz de desencriptar como ofuscar y recompilar todo en uno. El body dsencriptado crea un nuevo desencriptador mutado, utilizando un algoritmo aleatorio de encriptado y luego permite al desencriptador encriptar antes de linkar las dos partes. El único problema son los emuladores, la ejecución en memoria puede ser detectada por los investigadores de malware.
+	\subsection{Polimorfismo}
+	Este malware es capaz de desencriptar como ofuscar y recompilar todo en uno. El cuerpo dsencriptado crea un nuevo desencriptador mutado, utilizando un algoritmo aleatorio de encriptado y luego permite al desencriptador encriptar antes de linkar las dos partes. El único problema son los emuladores, la ejecución en memoria puede ser detectada por los investigadores de malware.
 	Las primeras generaciones de ofuscadores tenían el siguiente problema:
 	\begin{itemize}
 		\item El tamaño del código infeccioso era constante (Polimer.512.A y Vienna \cite{vienna}).
@@ -345,8 +388,9 @@
 		\item Segmentos de código similares entre generaciones del malware pueden detectarse por análisis de entropía
 	\end{itemize}
 
-	\paragraph{Ejemplos de malware polimórfico} 
+	\paragraph{Ejemplos de malware polimórfico:} 
 	\begin{itemize}
+		\item Luna. Uno de los primeros malware porlimórficos desarrollado por Bumblebee en España en el año 1999. Apareció en la cuarta versión de la revista 29A. \cite{luna}
 		\item Loveletter. Uno de los primeros gusanos en alcanzar un gran número de daños.\cite{loveletter}
 		\item Storm Worm Email. Responsable del 8\% de todas las infecciones gloables de malware. Utilizando como infección un archivo adjunto de un email. Su difícil detección era porque su código cambiaba cada 30 minutos aproximadamente. \cite{stormwormemail}
 		\item CryptoWall. Es un ransomware que cifra los ficheros de la computadora de la víctima exigiendo el pago de un rescate para su descifrado. \cite{cryptowall}
@@ -357,7 +401,7 @@
 	\end{itemize}
 	
 	\subsection{Metamorphism}
-	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el body constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer una Subrutine Reordering. En el caso del gráfico anterior(b), la separación entre el desencriptador y el body malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un body de malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor me mutación que contiene muchos subprocesos.
+	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el cuerpo constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer una Subrutine Reordering. En el caso del gráfico anterior(b), la separación entre el desencriptador y el cuerpo malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un cuerpo del malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor me mutación que contiene muchos subprocesos.
 	
 	\subsection{Metamorphic Engine}
 	Es el responsable de la ofuscación reconstrucción del vinario para que el binario funcione. Los componentes de este motor son los siguientes:
@@ -376,16 +420,15 @@
 		\centering
 		\includegraphics[width=4cm]{images/metamorphic.png}
 		\caption{Componentes del Motor Metamórfico}
-		\label{fig:4}
 	\end{figure}
 
 	\subsubsection{Pasos del Motor Metamórfico para desencriptar}
 	\begin{enumerate}
-		\item La rutina desencripta el body del Malware y ejecuta una instancia del mismo.
+		\item La rutina desencripta el cuerpo del Malware y ejecuta una instancia del mismo.
 		\item La Rutina de Desencriptado desencripta el motor de mutación y lo ejecuta.
-		\item El Shrinker desofusca el body del código malicioso.
+		\item El Shrinker desofusca el cuerpo del código malicioso.
 		\item La ofuscación se lleva a cabo introduciendo una nueva y únca rutina de desencriptado.
-		\item El body del código malicioso se ofusca por el motor de mutación para producir una generación única utilizando varias técnicas . Luego se encripta utilizando un algoritmo único, una clave estática o una clave temporal.
+		\item El cuerpo del código malicioso se ofusca por el motor de mutación para producir una generación única utilizando varias técnicas . Luego se encripta utilizando un algoritmo único, una clave estática o una clave temporal.
 		\item Finalmente el motor de mutación es encriptado.
 	\end{enumerate}
 
@@ -393,7 +436,6 @@
 		\centering
 		\includegraphics[width=10cm]{images/steps_metamorphic.png}
 		\caption{Pasos del Motor Metamórfico para Desencriptar}
-		\label{fig:5}
 	\end{figure}
 	
 	\subsection{Encryption}
@@ -402,7 +444,6 @@
 		\centering
 		\includegraphics[width=4cm]{images/cascade.png}
 		\caption{Diagrama de funcionamiento del Malware CASCADE}
-		\label{fig:6}
 	\end{figure}
 	Más adelante, el malware evolucionó de forma que en lugar de tener una sóla encriptación, tienen docenas de ellas, como en el caso del DOS/Whale en 1990 \cite{whale} o de forma aleatoria como en el caso de W32/MetaPHOR \cite{metaphor}
 	La encriptación básica, puede desarollarse con una única clave byte a byte, sin embargo hay formas alternativas en la que la clave se va actualizando a cada paso o incluso utilizando los caracteres encriptados.
@@ -411,7 +452,6 @@
 		\centering
 		\includegraphics[width=12cm]{images/encrypt.png}
 		\caption{Tipos de encriptación. a. Clave reutilizada. b. La clave va cambiando por cada bloue. c. Se utiliza el código cifrado para encryptar cada bloque}
-		\label{fig:7}
 	\end{figure}
 
 	\subsection{Compression}
@@ -423,7 +463,6 @@
 		\centering
 		\includegraphics[width=12cm]{images/packer.png}
 		\caption{Pasos en un Packer}
-		\label{fig:8}
 	\end{figure}
 
 	
@@ -443,7 +482,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Algoritmo de Shannon en Python}, label=lst:rcode, language={python}]
+		\begin{lstlisting}[caption={Algoritmo de Shannon en Python}, language={python}]
 			def entropy(string):
 			"Calculates the Shannon entropy of a UTF-8 encoded string"
 			
@@ -465,7 +504,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Herramienta de análisis de Entropía}, label=lst:rcode, language={python}]
+		\begin{lstlisting}[caption={Herramienta de análisis de Entropía}, language={python}]
 			#!/bin/python3
 			import math
 			
@@ -511,7 +550,6 @@
 		\centering
 		\includegraphics[width=18cm]{images/tool_1.png}
 		\caption{Análisis del Fichero Completo}
-		\label{fig:9}
 	\end{figure}
 	
 	
@@ -519,7 +557,6 @@
 		\centering
 		\includegraphics[width=18cm]{images/tool_2.png}
 		\caption{Análisis del Fichero por Líneas }
-		\label{fig:10}
 	\end{figure}
 
 
@@ -600,7 +637,6 @@
 		\centering
 		\includegraphics[width=18cm]{images/beautifully.png}
 		\caption{CyberChef JavaScript Beautifully}
-		\label{fig:11}
 	\end{figure}
 	
 	\subsection{IIFE: Immediately Infoked Function Expression}
@@ -611,7 +647,7 @@
 	Considerando el siguiente ejemplo, no se va a ejecutar nada:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 1}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE 1}, language={Java}]
 			function hello(message) {
 				console.log(message)
 			}
@@ -620,7 +656,7 @@
 	Sin embargo, si ejecutamos este otro, sí se nos ejecutará la función:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 2}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE 2}, language={Java}]
 			function hello(message) {
 				console.log(message)
 			}
@@ -632,7 +668,7 @@
 	Ahora vamos a hacer IIFFE de este código. También se ejecutará la función.
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 3}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE 3}, language={Java}]
 			(function hello(message) {
 				console.log(message)
 			})('This is test')
@@ -649,7 +685,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 4}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE 4}, language={Java}]
 			(function(quhuvu6) {
 				
 				// ...
@@ -667,7 +703,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			function cicuza(syhri) {
 				var fahomyfo = [];
 				for (var segovmiw4 = parseInt((0).toString(36)) /*CN1b367Z19XZqi8XgI67*/ ; segovmiw4 < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")]; segovmiw4 += parseInt((2).toString(36))) {
@@ -682,7 +718,7 @@
 	Vamos a renombrar \verb*|fahomyfo| a un nombre con sentido para verlo mejor. En la función, se declara esta variable como array y luego tras un for y cierta lógica, se devuelve un resultado,a sí que llamaremos a la variable \verb*|result|:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 2}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 2}, language={Java}]
 			function cicuza(syhri) {
 				var result = [];
 				for (var segovmiw4 = parseInt((0).toString(36)) /*CN1b367Z19XZqi8XgI67*/ ; segovmiw4 < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")]; segovmiw4 += parseInt((2).toString(36))) {
@@ -697,7 +733,7 @@
 	Ahora vamos a ver el bucle \verb*|for|. Primero definimos el valor inicial de la variable con la que empieza:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 3}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 3}, language={Java}]
 			for (var segovmiw4 = parseInt((0).toString(36)) /*CN1b367Z19XZqi8XgI67*/ ; ....
 		\end{lstlisting}
 	\end{scriptsize}
@@ -706,7 +742,7 @@
 	
 	\begin{itemize}
 		\item \verb*|(0)| vale 0
-		\item \verb*|.toString(36)| es un método que devuelve una representación de un objeto JavaScript. Cada objeto de JavaScipt tiene este método, en este caso el número 0 será el 0 en representación de String.
+		\item \verb*|.toString(36)| es un método que devuelve una representación de un objeto JavaScript. Cada objeto de JavaScript tiene este método, en este caso el número 0 será el 0 en representación de String.
 		\item Cuando se llama a la función \verb*|.toString| con un número como parámetro, que puede ser un número entero entre 2 y 36 especificando la base en la que se representará el valor numérico. Así que en este caso será el número 0 en base 36. Resultando el número \verb*|0|
 	\end{itemize}
 
@@ -716,7 +752,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 4}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 4},language={Java}]
 			function cicuza(syhri) {
 				var result = [];
 				for (var i = 0; i < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")]; i += parseInt((2).toString(36))) {
@@ -729,7 +765,7 @@
 	Ahora nos vamos a enfocar en el siguiente código:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 5}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 5}, language={Java}]
 			i < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")];
 		\end{lstlisting}
 	\end{scriptsize}
@@ -738,9 +774,8 @@
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=8cm]{images/string.png}
+		\includegraphics[width=6cm]{images/string.png}
 		\caption{Conjunto de Caracteres String}
-		\label{fig:12}
 	\end{figure}
 	
 	Podemos leer los primeros caracteres dentro de \verb*|i < syhri[...]| que son \verb*|l e n g|, el quinto es una construcción como la anterior pero en este caso \verb*|(29).toString(36)| que es el la 29 cifra Hexadecimal que es la \verb*|t|. La última expresión devuelve la \verb*|h| y finalmente con la concatenación del operador \verb*|+| podemos ver que el resultado es \verb*|syhri["length"]|.
@@ -751,7 +786,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 6}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 6}, language={Java}]
 			function cicuza(val) {
 				var result = [];
 				for (var i = 0; i < val["length"]; i += 2) {
@@ -768,7 +803,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 7}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 7}, language={Java}]
 			let arr = [] // declare Array object named arr
 			arr.push(10) // adds 10 as a first element of Array arr
 			arr.push(20) // adds 20 as a second element
@@ -779,7 +814,7 @@
 	Si observamos la siguiente línea:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 8}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 8}, language={Java}]
 			parseInt(val["s" + "u" + "b" + "s" + ("M", "h", "M", "U", "f", "t") + ("M", "q", "r")](i, (85, 19, 84, 9, 2)), parseInt((42).toString(0x24)) /*uShFAoMcgqPvcds6w2xD*/ )
 		\end{lstlisting}
 	\end{scriptsize}
@@ -789,7 +824,7 @@
 	Así que tendremos lo siguiente hasta ahora:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 9}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 9}, language={Java}]
 			parseInt(val["substr"](i, (85, 19, 84, 9, 2)), parseInt((42).toString(0x24)) /*uShFAoMcgqPvcds6w2xD*/ )
 		\end{lstlisting}
 	\end{scriptsize}
@@ -798,7 +833,7 @@
 
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 10}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores 10}, language={Java}]
 			val["substr"](i, 2)
 		\end{lstlisting}
 	\end{scriptsize}
@@ -807,7 +842,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores desofuscado}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores desofuscado}, language={Java}]
 			function cicuza(val) {
 				var result = [];
 				for (var i = 0; i < val.length; i += 2) {
@@ -823,7 +858,7 @@
 	Si cogemos la primera parte del String \verb*|"41553a304f0b442551284206"|, 41 pasa a ser 65, 55, 85, 3a se convierte en 58, 30 en 48, 4f en 79 y así en adelante. Al final acabará siendo un array que contiene valores decimales, que será la variable \verb*|defiq| del malware
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores post}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores post}, language={Java}]
 			(...)
 			var defiq = cicuza(quhuvu6);   // here we are so far :)
 			var permy = "H@D~7a84O";
@@ -840,7 +875,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 1}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 1}, language={Java}]
 			function doubleX(x) {
 				return x * 2
 			}
@@ -852,7 +887,7 @@
 	Vamos a ofuscar este código:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 2}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 2}, language={Java}]
 			let xcf = new Function("x","return x * 2")
 			
 			xcf(10)   // returns 20 as well
@@ -866,7 +901,7 @@
 	Es decir, sustituyendo el código anterior:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 3}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 3}, language={Java}]
 			let xcf = a.forEach.constructor("x","return x * 2")
 			
 			xcf(10)  // yep, it works! 20
@@ -877,7 +912,7 @@
 		
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 4}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 4}, language={Java}]
 			let sdfgfdg = "".substr
 			sdfgfdg.call("malware",1,2)   // "al"
 		\end{lstlisting}
@@ -887,7 +922,7 @@
 
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 5}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 5}, language={Java}]
 			"malware".substr(1,2)  // "al"
 		\end{lstlisting}
 	\end{scriptsize}
@@ -897,7 +932,7 @@
 	Vamos a aplicar esto al código de nuestro malware:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 6}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 6}, language={Java}]
 			var xewubdiwhit = "kydka"[(12).toString(36) + (24).toString(36) + ("r", "w", "h", "Z", "n") + ("n", "X", "L", "s", "w", "s") + "t" + (27).toString(36) + "u" + "c" + ("d", "m", "b", "t") + ("z", "E", "z", "n", "o") + ("N", "J", "r")];
 		\end{lstlisting}
 	\end{scriptsize}
@@ -905,7 +940,7 @@
 	Entonces esto acabará siendo:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 7}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 7}, language={Java}]
 			var xewubdiwhit = "kydka"["constructor"]
 		\end{lstlisting}
 	\end{scriptsize}
@@ -914,14 +949,14 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 8}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 8}, language={Java}]
 			var fnConstructor = String.constructor
 		\end{lstlisting}
 	\end{scriptsize}
 	Así que el código de nuestro malware quedará de la siguiente manera:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 9}, label=lst:rcode, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 9},  language={Java}]
 			(function(quhuvu6) {
 				var defiq = cicuza(quhuvu6);
 				var permy = "H@D~7a84O";
@@ -939,8 +974,156 @@
 	\end{scriptsize}
 	
 	\subsection{Operadores Lógicos}
+	Si analizamos el siguiente fragmento:
 	
+	\begin{scriptsize}
+	\estiloR
+	\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 1},  language={Java}]
+   while (mirjokbynet <= permy[("h", "g", "B", "W", "l") + "e" + (23).toString(0x24) + "g" + ("u", "Z", "W", "u", "t") + (17).toString(36)]) {
+			dikol = (permy[("M", "H", "s") + ("C", "N", "D", "u") + (11).toString(0x24) + (28).toString(0x24) + ("T", "k", "t") + "r"](permy[(21).toString(0x24) + "e" + "n" + (16).toString(36) + ("L", "S", "x", "t") + ("I", "D", "h") /*Q5E278CBpoixvOtUNpix*/ ] - mirjokbynet))[("d", "R", "p", "s") + ("H", "K", "A", "s", "D", "p") + "l" + "i" + ("Y", "b", "h", "t") /*O7MOfVrRkP9RlXlfKLxi*/ ]('');
+			for (var juqno = +!!false; juqno < defiq[("R", "t", "E", "l") + ("y", "e", "f", "R", "e") + (23).toString(36) + (16).toString(36) + "t" + "h" /*H3RMPYzEeu55OVeGgb1v*/ ]; juqno++) {
+				defiq[juqno] = defiq[juqno] ^ dikol[juqno % dikol["l" + (14).toString(36) + "n" + (16).toString(0x24) + (29).toString(0x24) + ("X", "O", "c", "m", "h")]]["c" + ("G", "w", "R", "e", "h") + (10).toString(36) + ("A", "W", "V", "i", "r") + "C" + ("Z", "O", "W", "o") + ("R", "N", "A", "y", "d") + "e" + "A" + "t" /*YZz3OuivKuwgqjkFVKu0*/ ]((88, 53, 3, 90, 0));
+			}
+			mirjokbynet++;
+		};
+		\end{lstlisting}
+	\end{scriptsize}
+
+	Además de lo que hemos visto anteriormente, hay unos usos extraños a la hora de utilizar operadores lógicos.
+	
+	Primero, vamos a simplificar el código y desofuscarlo con las técnicas que ya conocemos, además de renombrar \verb*|mirjokbynet| a \verb*|k| yu \verb*|juqno| a \verb*|j| también:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 2}, language={Java}]
+			
+			while (k <= permy.length) {
+				dikol = (permy.substr(permy.length - k)).split('');
+				for (var j = +!!false; j < defiq.length; j++) {
+					defiq[j] = defiq[j] ^ dikol[j % dikol.length].charCodeAt(0);
+				}
+				k++;
+			};
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	Si observamos la variable de la condición del \verb*|while| llamada \verb*|permy| se utiliza y su definición asigna \verb*|"H@D~7a84O| al principio del script \verb*|var permy = "H@D~7a84O";|
+	
+	Ahora analizaremos el fragmento:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 3}, language={Java}]
+		 while (k <= 9) {   // 9 is value of permy.length
+		\end{lstlisting}
+	\end{scriptsize}
+
+	La siguiente línea, define el valor de \verb*|dikol|:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 4}, language={Java}]
+			dikol = (permy.substr(permy.length - k)).split('');
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	Como en este caso \verb*|k| es 0, \verb*|dikol| va a ser el último elemento del string \verb*|permy| que se parte en un array con la orden \verb*|split('')|, así que su valor en la primera iteración del while es \verb*|[0]|.
+	
+	Ahora vamos a la parte del for:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 5}, language={Java}]
+			for (var j = +!!false; j < defiq.length; j++) {
+				defiq[j] = defiq[j] ^ dikol[j % dikol.length].charCodeAt(0);
+			}
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	¿Qué evalua \verb*|+!!false|?
+	\begin{itemize}
+		\item inicialmente es \verb*|false|
+		\item luego, el primer \verb*|!| que es un NOT lógico, lo cambia a \verb*|true|
+		\item más tarde, el siguiente \verb*|!| lo vuelve a cambiar a \verb*|false|
+		\item finalmente, el \verb*|+| hace un casting de Booleano a Entero, de \verb*|false| al valor \verb*|0|
+	\end{itemize}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=5cm]{images/operators.png}
+		\caption{Operadores lógicos}
+	\end{figure}
+
+	También tenemos otros operadores lógicos dentro del bucle for. Si nos fijamos \verb*|defiq| es un array con valores decimales (basándonos en las técnicas descritas anteriormente). Su primer elemento es el \verb*|65|. El resultado de la expresión \verb*|efiq[j] ^ dikol[j % dikol.length].charCodeAt(0)| se calcula de la siguiente manera:
+	
+	\begin{itemize}
+		\item \verb*|j| es el valor de control del bucle. Comienza con el valor \verb*|0| así que el resultado \verb*|j % dikol.length| es \verb*|0| \verb*|(0 % 1 = 0)|. Recordemos que en esta iteración, \verb*|dikol.lenght| vale 1.
+		\item ahora, tenemos la expresión \verb*|efiq[j] ^ dikol[0].charCodeAt(0)| que equivale a \verb*|65 ^ 79|. El primer elemento del array es 65 como resultado de \verb*|dikol[0].charCodeAt(0)| \verb*|dikol[0]| que es la \verb*|O| mayúscula. \verb*|'O'.charCodeAt(0)| es el número 79.
+		\item el operador \verb*|^| es el operador XOR. El resultado de \verb*|65 ^ 79| es 14.
+	\end{itemize}
+	A continuación el bucle va a ir incrementando el valor de la variable k, comenzando la operación otra vez y el array con diferentes valores.
+	
+	
+	\subsection{Ofuscación de caracteres y Strings}
+	\subsubsection{Código en un conjunto de enteros}
+	Nos podemos encontrar como en esta muestra, sacada de un pdf, la función \verb*|var n = ""; eval(eval('Stri'+ n + 'ng.fr' + n + 'omCharC' + n + 'ode| con un listado de números. Si nos vamos a CyberChef, reemplazamos las comas por espacios y ejecutamos \textit{From Charcode} con la base en 10, vemos que se transforma en un código en Javascript:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/pdf1.png}
+		\caption{Conjunto de enteros}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/pdf2.png}
+		\caption{Conjunto de enteros}
+	\end{figure}
+
+	\subsubsection{Caracteres en Unicode}
+	Podemos encontrarnos los caracteres en formato unicode, pero con la herramienta \textit{JavaScript Beautify} ya lo traduce automáticamente a la vez que formatea el código JavaScript:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/unicode.png}
+		\caption{Caracteres unicode}
+	\end{figure}
+
+	\subsubsection{Caracteres en Hexadecimal}
+	En el siguiente snippet del malware WSHRat \cite{javascript_malware}, podemos observar que tiene muchas partes que están ofuscadas en valores hexadecimales:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/hexadecimal.png}
+		\caption{Caracteres hexadecimales}
+	\end{figure}
+
+	\subsubsection{Caracteres de URL}
+	El siguiente snippet de código de la versión de VB de STRRAT, como podemos observar, es una larga cadena de caracteres codificados en formato URL:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/url_char.png}
+		\caption{Caracteres hexadecimales}
+	\end{figure}
+
+
 	\subsection{Base64}
+	El siguiente snippet de código forma parte del payload de STRRAT\cite{javascript_malware}, como podemos observar, es un largo Base64, que a continuación decodificará.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/base64.png}
+		\caption{Caracteres hexadecimales}
+	\end{figure}
+	
+	
+	\section{Freyja Deobfuscation Tool}
+	Se ha desarrollado una herramienta, basándonos en los análisis que hemos mencionado anteriormente para facilitar la desofuscación de malware en JavaScript y su análisis.
+	
+	Esta herramienta tendrá las siguientes funcionalisades:
+	\begin{itemize}
+		\item Limpia el código y lo tabula de manera similar, no sólo tabulando las instrucciones, sino que parsea los caracteres en hexadecimal y unicode.
+		\item Checkeo de entropía, línea por línea o por texto completo.
+		\item Cuando los caracteres Unicode o en Hexadecimal no están parseados ya que no están en formato String sino que es una variable ofuscada, se parsean a mayores también.
+		\item Búsqueda de strings en base64 y su decodificación.
+	\end{itemize}
 	
 	
 	
@@ -964,6 +1147,10 @@
 		
 		\href{https://minerva-labs.com/blog/malware-evasion-techniques-obfuscated-files-and-information/}{https://minerva-labs.com/blog/malware-evasion-techniques-obfuscated-files-and-information/}
 		
+		\bibitem{yara}
+		Reglas Yara en Virus Total
+		
+		\href{https://virustotal.github.io/yara/}{https://virustotal.github.io/yara/}
 		
 		\bibitem{polymorfic}
 		Malware Polimórfico
@@ -1052,6 +1239,11 @@
 		Malware Vienna
 		
 		\href{https://www.f-secure.com/v-descs/vienna.shtml}{https://www.f-secure.com/v-descs/vienna.shtml}
+		
+		\bibitem{luna}
+		Luna, el primer malware polimórfico de la historia.
+		
+		\href{http://virus.wikidot.com/luna#toc2}{http://virus.wikidot.com/}
 		
 		\bibitem{loveletter}
 		Gusano	LoveLetter o ILOVEYOU
@@ -1145,6 +1337,17 @@
 		Cobalt Strike
 		
 		\href{https://www.cobaltstrike.com/}{https://www.cobaltstrike.com/}
+		
+		\bibitem{jsmalwareobfuscation}
+		Understanding JavaScript Malware Obfuscation
+		
+		\href{https://github.com/bl4de/research/blob/master/javascript-malware-obfuscation/Simple_JavaScript_malware_code_obfuscation_examples.md}{https://github.com/bl4de/research/tree/master/javascript-malware-obfuscation}
+		
+		\bibitem{wshrat}
+		Analizando la ofuscación de WSHRAT (VB)
+		\href{https://www.binarydefense.com/resources/blog/revenge-is-a-dish-best-served-obfuscated/}{https://www.binarydefense.com/}
+		
+		
 		
 	\end{thebibliography}
 

@@ -1,6 +1,5 @@
 #!/bin/python3
 
-
 def e1(x, y):
     return x + y
 
@@ -33,7 +32,7 @@ def o3(x):
         x += 85
         return x
 
-
+print("These are some examples about mba and opaque obfuscation:")
 print("Mba test e1 with 3 and 4 is: ", e1(3, 4))
 print("Mba test e2 with 3 and 4 is:", e2(3, 4))
 
