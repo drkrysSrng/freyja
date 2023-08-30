@@ -1,0 +1,3 @@
+[submodule "samples/javascript-malware-collection"]
+	path = samples/javascript-malware-collection
+	url = https://github.com/HynekPetrak/javascript-malware-collection.git
