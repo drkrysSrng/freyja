@@ -10,3 +10,6 @@ doc/tfm_obfuscation.toc
 samples/master_example
 samples/simple_js_malware_code
 samples/*.js
+dev/dist
+dev/build
+dev/freyja.spec

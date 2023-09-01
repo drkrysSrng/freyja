@@ -14,7 +14,8 @@
 \fancyhead[R]{\textbf{TFM: Estudio práctico de técnicas de ofuscación y contramedidas aplicables}}
 \fancyfoot{} % clear all footer fields
 \fancyfoot[R]{\thepage}
-\fancyfoot[L]{María del Carmen San José Seco}
+\fancyfoot[L]{\includegraphics[width=0.75cm,valign=c]{images/freyja.png}
+       \href{https://github.com/drkrysSrng/freyja}{@drkrysSrng/freyja}}
 
 \usepackage{hyperref} 
 \usepackage{amsmath}
@@ -95,7 +96,7 @@
 		PRESENTA \\
 		\vspace{.3cm}
 		\large
-		\textbf{María del Carmen San José Seco\\ \href{https://github.com/drkrysSrng/freyja}{@drkrysSrng/freyja} }
+		\textbf{María San José Seco\\ \href{https://github.com/drkrysSrng/freyja}{@drkrysSrng/freyja} }
 		
 		\vspace{0.5cm}
 		\normalsize	
@@ -289,16 +290,15 @@
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Ejemplo de expresiones MBA equivalentes}, language={python}]
+
 			def e1(x, y):
-				return x + y
+			    return x + y
 			
-			
-			def e2(x, y ):
-				return (x + y) + 2 * (x & y)
-			
-			
-			print("El resutado de e1 es: ", e1(3, 4))
-			print("El resutado de e2 es: ", e2(3, 4))
+			def e2(x, y):
+			    return (x + y) + 2 * (x & y)
+			    
+			print("Mba test e1 with 3 and 4 is: ", e1(3, 4))
+			print("Mba test e2 with 3 and 4 is:", e2(3, 4))
 			
 			#Resultado:
 			El resutado de e1 es:  7
@@ -314,36 +314,34 @@
 		\estiloR
 		\begin{lstlisting}[caption={Ejemplo de expresiones Opacas equivalentes}, language={python}]
 			
-			def o1():
-				x = 5
-				
-				if x % 2: 		# 5 not divyde by 2 so it is always true
-					x = 1 << x
-					x = 2 * x + 9
-					return x
+			def o1(x):
+			    if x % 2: # 5 cannot be divided by 2, always true
+			        x = 1 << x
+			        x = 2 * x + 9
+			        return x
 			
+			def o2(x):
+			    if ((4 * x * x + 4) % 19) != 0:
+			        x = 1 << x
+			        x = 2 * x + 9
+			        return x
 			
-			def o2():
-				x = 5
-				if ((4 * x * x + 4) % 19) != 0: # For all integers
-					x = 1 << x
-					x = 2 * x + 9
-					return x
+			def o3(x):
+			    if ((4 * x * x + 4) % 19) != 0:
+			        if x % 2:
+			            x = 1 << x
+			            x = 2 * x + 9
+			            return x
+			        else:
+			            x *= 5
+			            return x
+			    else:
+			        x += 85
+			        return x
+			print("Opaque test o1: ", o1(5))
+			print("Opaque test o1: ", o2(5))
+			print("Opaque test o1: ", o3(5))
 			
-			
-			def o3():
-				x = 5
-				if ((4 * x * x + 4) % 19) != 0: # for all integers
-					if x % 2:
-						x = 1 << x
-						x = 2 * x + 9
-						return x
-					else:
-						x *= 5
-						return x
-				else:
-					x += 85
-					return x
 			
 			# Resultado
 			El resutado de o1 es:  73
@@ -354,7 +352,7 @@
 	\end{scriptsize}
 	
 	
-	
+	\newpage
 	\section{Encriptación, Compresión y Metamorfismo}
 	El metamorfismo y otras formas de ofuscación, son la parte principal de las amenazas que nos encontramos hoy en día. Al igual que las técnicas basadas en firma de los antivirus avanzan, también los niveles de ofuscación empleados por los actores para evadirlas.
 	
@@ -627,7 +625,6 @@
 	Emplea Cobalt Strike\cite{cobaltstrike} como malware de seguimiento posterior a una infracción.\footnote{Herramienta de Red Team para probar los sitemas y sus mecanismos de protección. }
 	
 	\newpage
-	
 	\section{Pasos para Desofuscar un Código Malware en JavaScript}
 		
 	\subsection{JavaScript Beautifully}
@@ -1065,17 +1062,18 @@
 	
 	
 	\subsection{Ofuscación de caracteres y Strings}
-	\subsubsection{Código en un conjunto de enteros}
-	Nos podemos encontrar como en esta muestra, sacada de un pdf, la función \verb*|var n = ""; eval(eval('Stri'+ n + 'ng.fr' + n + 'omCharC' + n + 'ode| con un listado de números. Si nos vamos a CyberChef, reemplazamos las comas por espacios y ejecutamos \textit{From Charcode} con la base en 10, vemos que se transforma en un código en Javascript:
+	\subsubsection{Conjunto de enteros evaluados con eval}
+	Nos podemos encontrar como en esta muestra, sacada de un pdf con \href{ [pdfstreamdumper](http://sandsprite.com/blogs/index.php?uid=7&pid=57)}{PDFStreamDumper}, un código JavaScript dentro de un documento PDF. Si nos fijamos, la función \verb*|var n = ""; eval(eval('Stri'+ n + 'ng.fr' + n + 'omCharC' + n + 'ode| con un listado de números. Si nos vamos a CyberChef, reemplazamos las comas por espacios y ejecutamos \textit{From Charcode} con la base en 10, vemos que se transforma en un código en Javascript. Este ejemplo está sacado de la Sample2.zip, la password es \textit{infected}:
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=15cm]{images/pdf1.png}
-		\caption{Conjunto de enteros}
+		\includegraphics[width=18cm]{images/pdf1.png}
+		\caption{Eval + conjunto de enteros}
 	\end{figure}
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=15cm]{images/pdf2.png}
-		\caption{Conjunto de enteros}
+		\caption{Eval + conjunto de enteros}
+		
 	\end{figure}
 
 	\subsubsection{Caracteres en Unicode}
@@ -1114,22 +1112,53 @@
 	\end{figure}
 	
 	
+	\newpage
 	\section{Freyja Deobfuscation Tool}
-	Se ha desarrollado una herramienta, basándonos en los análisis que hemos mencionado anteriormente para facilitar la desofuscación de malware en JavaScript y su análisis.
+	Se ha desarrollado una herramienta, basándonos en los análisis que hemos mencionado anteriormente para facilitar la desofuscación de malware en JavaScript y su análisis. Tiene las siguientes funcionalidades:
 	
-	Esta herramienta tendrá las siguientes funcionalisades:
 	\begin{itemize}
 		\item Limpia el código y lo tabula de manera similar, no sólo tabulando las instrucciones, sino que parsea los caracteres en hexadecimal y unicode.
-		\item Checkeo de entropía, línea por línea o por texto completo.
+		\item Chequeeo de la entropía con el algoritmo de Shannon, línea por línea o por texto completo.
 		\item Cuando los caracteres Unicode o en Hexadecimal no están parseados ya que no están en formato String sino que es una variable ofuscada, se parsean a mayores también.
+		\item Desofusca funciones como:
+		\begin{itemize}
+			\item \verb*|toString|, parsea los números a la base indicada y luego los pasa a string
+			\item conjuntos de números dentro de \verb*|eval| a string
+			\item evalúa y sustituye la función \verb*|unescape|
+			\item evalúa la función \verb*|parseInt|
+		\end{itemize}
+		\item Concatena cadenas de caracteres separadas con el símbolo \verb*|+|
 		\item Búsqueda de strings en base64 y su decodificación.
 	\end{itemize}
 	
+	\subsection{Funcionamiento}
+	Cuando ejecutamos al inicio la herramienta tenemos las siguientes opciones:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/usage.png}
+		\caption{Opciones de Freyja}
+	\end{figure}
 	
+	\subsection{Entropía}
+	Si queremos anlalizar la entropía de Shannon de un fichero, tenemos dos opciones: línea por línea o del fichero completo.
+	La diferencia es que si lo hacemos línea por línea, solamente nos mostrará las líneas sospechosas ya que en teoría si la entropía nos da mayor de 3.75, se supone que ese texto no está escrito por un humano.
 	
+	\subsubsection{Línea por Línea}
+	El comando sería \verb*|freyja -f filein.js -e line|
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/line_entropy.png}
+		\caption{Entropía por líneas}
+	\end{figure}
+	\subsubsection{Fichero completo}
+		El comando sería \verb*|freyja -f filein.js -e file|
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=18cm]{images/file_entropy.png}
+			\caption{Entropía del fichero completo}
+		\end{figure}
 	
-	
-	
+	\subsection{Repositorios para probar}
 	
 	\newpage
 	\listoffigures
@@ -1346,8 +1375,7 @@
 		\bibitem{wshrat}
 		Analizando la ofuscación de WSHRAT (VB)
 		\href{https://www.binarydefense.com/resources/blog/revenge-is-a-dish-best-served-obfuscated/}{https://www.binarydefense.com/}
-		
-		
+				
 		
 	\end{thebibliography}
 
