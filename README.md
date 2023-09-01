@@ -53,9 +53,6 @@ freyja -f filein.js -e file
 Based on Shannon Algorithm, I have made this tool in order to analyze files to check the probabilities of a file or the lines of a file to be obfuscated or not.
 Usually the obfuscated code returns probability values higher than a **3.75**:
 
-## Javascript Examples to test
-git clone https://github.com/HynekPetrak/javascript-malware-collection.git
-
 ### Javascript Desobfuscation
 * To desobfuscate a JavaScript file, we use this command:
 ```commandline
