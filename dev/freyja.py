@@ -100,7 +100,9 @@ def parse_hex(data):
 
     return data
 
-
+"""
+    Parse char unicode to char
+"""
 def parse_unicode(data):
     def replace_unicode(match):
         return chr(int(match.group(1), 16))
@@ -156,7 +158,6 @@ def append_strings_multi(data):
     length = 0
 
     for match in matches:
-        print(match.group(0))
 
         to_string = ""
 
@@ -194,63 +195,6 @@ def replace_tostring(data):
 
     return data
 
-"""
-    If there is a char set, it replaces it with the last value ("A", "B", "C") is "C"
-"""
-def parse_char_set(data):
-    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
-
-    # Find all matches of the pattern
-    matches = re.finditer(pattern, data, re.MULTILINE)
-
-    length = 0
-
-    for match in matches:
-        to_string = "+ \"" + match.group(2) + "\" +"
-
-        print(match.group(0))
-        print(match.group(2))
-        print(to_string)
-        data = data[:match.start() - length] + to_string + data[match.end() - length:]
-
-        length = length + len(match.group(0)) - 7
-
-    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*'
-
-    # Find all matches of the pattern
-    matches = re.finditer(pattern, data, re.MULTILINE)
-
-    length = 0
-
-    for match in matches:
-        to_string = "+ \"" + match.group(2) + "\" "
-
-        print(match.group(0))
-        print(match.group(2))
-        print(to_string)
-        data = data[:match.start() - length] + to_string + data[match.end() - length:]
-
-        length = length + len(match.group(0)) - 6
-
-    pattern = r'\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
-
-    # Find all matches of the pattern
-    matches = re.finditer(pattern, data, re.MULTILINE)
-
-    length = 0
-
-    for match in matches:
-        to_string = " \"" + match.group(2) + "\" +"
-
-        print(match.group(0))
-        print(match.group(2))
-        print(to_string)
-        data = data[:match.start() - length] + to_string + data[match.end() - length:]
-
-        length = length + len(match.group(0)) - 6
-
-    return data
-
 
 """
     Replaces toString function parsing its contect to string integer equivalent
@@ -284,6 +228,54 @@ def replace_hex_tostring(data):
 
 
 """
+    If there is a char set, it replaces it with the last value ("A", "B", "C") is "C"
+"""
+def parse_char_set(data):
+    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
+
+    # Find all matches of the pattern
+    matches = re.finditer(pattern, data, re.MULTILINE)
+
+    length = 0
+
+    for match in matches:
+        to_string = "+ \"" + match.group(2) + "\" +"
+        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+
+        length = length + len(match.group(0)) - 7
+
+    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*'
+
+    # Find all matches of the pattern
+    matches = re.finditer(pattern, data, re.MULTILINE)
+
+    length = 0
+
+    for match in matches:
+        to_string = "+ \"" + match.group(2) + "\" "
+
+        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+
+        length = length + len(match.group(0)) - 6
+
+    pattern = r'\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
+
+    # Find all matches of the pattern
+    matches = re.finditer(pattern, data, re.MULTILINE)
+
+    length = 0
+
+    for match in matches:
+        to_string = " \"" + match.group(2) + "\" +"
+
+        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+
+        length = length + len(match.group(0)) - 6
+
+    return data
+
+
+"""
     Replaces parseInt function parsing the content char to a in integer value
 """
 def parse_int(data):
@@ -302,6 +294,9 @@ def parse_int(data):
     return data
 
 
+"""
+    Replaces unescape function parsing the content to string
+"""
 def parse_unescape(data):
     pattern = r'unescape\([\'"]([^\'"]+)[\'"]\)'
 
@@ -315,6 +310,9 @@ def parse_unescape(data):
     return data
 
 
+"""
+    Replaces eval with a list of numbers
+"""
 def parse_eval_list_numbers(data):
     def replace_with_chars(match):
         numbers = re.findall(r'\d+', match.group(1))
@@ -326,7 +324,9 @@ def parse_eval_list_numbers(data):
 
     return data
 
-
+"""
+    Calling desobfuscation tools
+"""
 def deobfuscate_data(file_path, file_out, level):
     data_beautified = beautify_file(file_path)
 
@@ -388,21 +388,21 @@ def deobfuscate_data(file_path, file_out, level):
 
         data_beautified = parse_eval_list_numbers(data_beautified)
 
-        data_beautified = replace_hex_tostring(data_beautified)
+        data_beautified = beautify_string(data_beautified)
 
     elif level == 7:
         print("Level. 7 Deobfuscate unescape function inside chars ")
 
         data_beautified = parse_unescape(data_beautified)
 
-        data_beautified = replace_hex_tostring(data_beautified)
+        data_beautified = beautify_string(data_beautified)
 
     elif level == 8:
         print("Level. 8 Deobfuscate char sets ")
 
         data_beautified = parse_char_set(data_beautified)
 
-        data_beautified = replace_hex_tostring(data_beautified)
+        data_beautified = beautify_string(data_beautified)
 
 
     elif level == 9:
@@ -410,7 +410,7 @@ def deobfuscate_data(file_path, file_out, level):
 
         data_beautified = parse_int(data_beautified)
 
-        data_beautified = replace_hex_tostring(data_beautified)
+        data_beautified = beautify_string(data_beautified)
 
 
     elif level == 10:
@@ -418,7 +418,7 @@ def deobfuscate_data(file_path, file_out, level):
 
         data_beautified = append_strings_multi(data_beautified)
 
-        data_beautified = replace_hex_tostring(data_beautified)
+        data_beautified = beautify_string(data_beautified)
 
     with open(file_out, "w") as f:
         f.write(data_beautified)

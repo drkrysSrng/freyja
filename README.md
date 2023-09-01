@@ -1,6 +1,6 @@
 <img align="left" height="70" src="doc/images/freyja.png" alt="freyja">
 
-# FREYJA Obfuscation List of Tools
+# Freyja Deobfuscation Tool
 
 ## Installation
 
@@ -56,7 +56,33 @@ Usually the obfuscated code returns probability values higher than a **3.75**:
 ## Javascript Examples to test
 git clone https://github.com/HynekPetrak/javascript-malware-collection.git
 
+### Javascript Desobfuscation
+* To desobfuscate a JavaScript file, we use this command:
+```commandline
+python freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
+freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
+```
+* '-f': File to deobfuscate
+* `-o`: The output file, if not, it will be out.js
+* `-l`: Set the level 0..10
+  * Level 0: All options 
+  * Level 1: Just Beautify the File.
+  * Level 2: Parse Hex numbers to String.
+  * Level 3: Parse Unicode characters.
+  * Level 4: Deobfuscate toString with numbers.
+  * Level 5: Deobfuscate toString with Hex numbers.
+  * Level 6: Deobfuscate Eval with a list of numbers.
+  * Level 7: Deobfuscate unescape function inside chars.
+  * Level 8: Deobfuscate char sets.
+  * Level 9: Deobfuscate parseInt function.
+  * Level 10: Append Chars.
+
+## Base64 Search:
+* To look for base64 strings and decode them:
+
+```commandline
+python freyja -b -f file.js -o output.json 
+```
 
 ## MBA and OPAQUE examples
 * Here we have some examples to test MBA and OPAQUE obfuscation techniques.
-

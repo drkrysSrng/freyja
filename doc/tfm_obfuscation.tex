@@ -132,12 +132,12 @@
 	
 	Otro método de análisis de código suele basarse en analizar strings. Consiste en buscar y analizar strings legibles de texto (en ASCII o Unicode) en un fichero que puede que no tenga caracteres legibles, porque sea un binario, por ejemplo. Esos strings de texto, pueden mostrarnos nombres de ficheros, IPs, URL, peticiones HTTP, claves de registro u otras cadenas que nos puedan indicar cómo funciona dicho malware. 
 	
-	Herramientas como YARA permiten realizar búsquedas programáticas sobre texto con el fin de realizar detecciones basadas en reglas. En el siguiente ejemplo, tenemos una regla YARA que busca tres patrones de texto:\cite{yara}
+	Herramientas como YARA permiten realizar búsquedas programáticas sobre texto con el fin de realizar detecciones basadas en reglas. En el siguiente ejemplo, tenemos una regla YARA que busca tres patrones de texto\cite{yara}:
 	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=10cm]{images/yara.png}
-		\caption{Ejemplo de reglas Yara para buscar tres strings}
+		\caption{Ejemplo de reglas Yara para buscar tres Strings}
 	\end{figure}
 	
 	
@@ -154,21 +154,21 @@
 
 	\section{Tipos de Ofuscación de malware}
 	\subsection{Packing}
-	Se comprime el fichero para que tenga una firma distinta al original. Además de eso, también los strings también serán incomprensibles. También puede incluso comprimirse el binario con software para hacerlo más pequeño. El ejecutable comprimido se empaca dentro del código requerido para descomprimirlo en tiempo de ejecución, luego la ejecución se hace en memoria.Este tipo de ofuscación lo utilizan malware como Redline Stealer \cite{redlinestealer} y Hancitor \cite{hancitor}
+	Se comprime el fichero para que tenga una firma distinta al original. Además de eso, los strings también serán incomprensibles. También puede incluso comprimirse el binario con software para hacerlo más pequeño. El ejecutable comprimido se empaca dentro del código requerido para descomprimirlo en tiempo de ejecución, luego la ejecución se hace en memoria. Este tipo de ofuscación lo utilizan malware como Redline Stealer \cite{redlinestealer} y Hancitor \cite{hancitor}
 	
-	Sin embargo, el hecho de que un programa esté empaquetado, ya es sospechoso, por lo que el malware moderno trata de no utilizar este sistema para pasar desapercibido.
+	Sin embargo, el hecho de que un programa esté empaquetado, ya es sospechoso, por lo que el malware moderno cada vez utiliza menos este sistema para pasar desapercibido.
 	
 	
-	\subsection{Dead-Code Insertion}
+	\subsection{Inserción de Dead-Code o código basura}
 	Es una forma simple de cambiar la apariencia del programa y su funcionalidad. \textbf{\textit{NOP}} es un ejemplo de comando en ensamblador. El código original se ofusca fácilmente insertando instrucciones \textbf{\textit{NOP}}. Los análisis basados en firma podrían detectarlo simplemente eliminando esta instrucción. \footnote{NOP significa en x86 o en intel \textit{no operation}}
 	
 	\textbf{\textit{NOP}} no hace nada. La ejecución continúa en la siguiente instrucción. Ningún registro ni flag es afectado por eta instrucción, simplemente se genera un delay en la ejecución o una reserva de espacio en memoria.
 	
-	También, podemos ver encadenamiento de instrucciones como if-else o inserción de código que afecta en nada al programa.
+	También, podemos ver encadenamiento de instrucciones como if-else o inserción de código basura que no afecta al funcionamiento del programa.
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Dead-Code Insertion}, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de Inserción de Dead-Code}, language={[x86masm]Assembler}]
 			; Before obfuscation
 			xor eax, eax
 			move eax, 0x2D
@@ -195,7 +195,7 @@
 		\end{lstlisting}
 	\end{scriptsize}
 
-	\subsection{Register reassignment}
+	\subsection{Reasignamiento de registros}
 	Es otra técnica simple que cambia registros por cada generación mientras el código del programa y su comportamiento siguen igual. En el siguiente código, se cambian los registros al inicio y se vuelven a cambiar al final, dejando la funcionalidad como estaba. El malware W95/Regswap \cite{regswap}
 	\begin{scriptsize}
 		\estiloR
@@ -211,7 +211,7 @@
 		\end{lstlisting}
 	\end{scriptsize}
 	
-	\subsection{Instruction Substitution}
+	\subsection{Sustitución de Instrucciones}
 	Hay una gran variedad de sustituciones que se pueden introducir. A continuación vemos un código en el que se sustituye la instrucción \textit{push eax; mov eax, ebx} con \textit{push eax; push ebx; pop eax}. Semánticamente son equivalentes pero \textit{push} y \textit{pop} es más lento que escribir directamente en el registro con \textit{mov}. Esta técnica se utiliza en el malware W95/Zmist \cite{zmist}, y también en malware avanzados como Evol, MetaPHOR \cite{metaphor}, Zperm \cite{zperm} y Avron\cite{avron}.
 	\begin{scriptsize}
 		\estiloR
@@ -231,19 +231,19 @@
 	Es una forma de ofuscación muy conocida. Básicamente consiste en un esquema de codificación de caracteres, con el carácter \textit{=} como padding. El afabeto incluye desde la a-z, A-Z, + / y los caracteres numéricos del 0-9. La codificación funciona encadenando 3 caracteres para generar una cadena de 24 bits, que luego se divide en cuatro fragmentos de 6 bits, cada uno de los cuales se traduce a uno de los caracteres Base64. A pesar de ser una técnica trivial, es ampliamente utilizada, sobre todo para ofuscar cadenas.
 	
 	
-	\subsection{Code Transposition}
+	\subsection{Transposición de Código}
 	Reordena la secuencia de instrucciones del código original sin afectar el comportamiento del código. Hay dos maneras:
 	\begin{itemize}
-		\item La primera técnica, cambia las instrucciones de forma aleatoria y luego inserta ramas incondicionales o saltos para restaurar la ejecución original. No es difícil detectar este método porque el programa original se puede restaurar eliminando las ramas incondiconales o saltos.
-		\item La segunda técnica crea nuevo código eligiendo y reordenando las instrucciones que son independientes entre ellas, es una técnica difícil de implementar, pero hace que la detección sea más difícil.
+		\item Cambiar las instrucciones de forma aleatoria y luego inserta ramas incondicionales o saltos para restaurar la ejecución original. No es difícil detectar este método porque el programa original se puede restaurar eliminando las ramas incondiconales o saltos.
+		\item Crear nuevo código eligiendo y reordenando las instrucciones que son independientes entre ellas, es una técnica difícil de implementar, pero hace que la detección sea más difícil.
 	\end{itemize}
 
-	\subsubsection{Subroutine reordering}
-	También conocido como Block Reordering, es una técnica que reordena el flujo del proceso cambiando bloques del código que tienen subrutinas independientes. Si un código tiene n subrutinas de código, tendrá \verb*|n!| permutaciones para reordenar dicho código.
+	\subsubsection{Reordenamiento de subrutinas}
+	También conocido como Block Reordering o reordenamiento de bloques, es una técnica que reordena el flujo del proceso cambiando bloques del código que tienen subrutinas independientes. Si un código tiene n subrutinas de código, tendrá \verb*|n!| permutaciones para reordenar dicho código.
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de sustitución de subroutine reordering}, language={[x86masm]Assembler}]
+		\begin{lstlisting}[caption={Ejemplo de sustitución de reordenamiento de subrutina}, language={[x86masm]Assembler}]
 			; Before obfuscation
 			mov eax , ebx
 			add ecx , edx
@@ -281,10 +281,10 @@
 		\end{lstlisting}
 	\end{scriptsize}
 
-	\subsection{Code integration}
+	\subsection{Integración de Código}
 	Fue por primera vez visto en W95/Zmist \cite{zmist}, le indica al código malicioso, unirse al código del programa objetivo, el malware decompila el programa e inyecta el código y lo reensambla para poder utilizarlo.
 	
-	\subsection{MBA Expressions}
+	\subsection{Expresiones MBA}
 	Las expresiones MBA sirven para ofuscar el código utilizando operadores booleanos o polinomios dejando la funcionalidad del código intacta. A continuación vemos dos expresiones equivalentes:
 	
 	\begin{scriptsize}
@@ -307,7 +307,7 @@
 		\end{lstlisting}
 	\end{scriptsize}
 	
-	\subsection{Opaque Expressions}
+	\subsection{Expresiones Opacas}
 	Normalmente se refieren a expresiones que siempre toman el valor de True o False, conocidas en tiempo de compilación pero son evaluadas en tiempo de ejecución. Aquí tenemos tres ejemplos donde añadiendo este tipo de expresiones condicionales, siempre se va a ejecutar el código que nos interese:
 	
 	\begin{scriptsize}
@@ -367,7 +367,7 @@
 	
 	\subsection{Oligomorfismo}
 	
-	Comenzó como una forma de evadir las técnicas de escaneo basadas en firma. Para evitar esto, tenemos las técnicas de escaneo tales como Wildcard y Mismatch. Teniendo en cuenta que el código de la infección suele estar añadido a un fichero, escaneos Top-and-Tail pueden ser efectivos para extraer las firmas de alguas partes del código. Además, el uso de emuladores ver cómo se extrae el malware y que el emuladdor monitoree la memoria y el código que se dumpea. El primer malware Oligomórfico fue Whale DOS \cite{whale}, identificado por primera vez en 1990. En la siguiente imagen, la rutina de desencriptado se utiliza para desencriptar el body y evitar la detección del malware.
+	Comenzó como una forma de evadir las técnicas de escaneo basadas en firma. Para evitar esto, tenemos las técnicas de escaneo tales como Wildcard y Mismatch. Teniendo en cuenta que el código de la infección suele estar añadido a un fichero, escaneos Top-and-Tail pueden ser efectivos para extraer las firmas de alguas partes del código. Además, el uso de sandboxes o emuladores sirve para ver cómo se extrae el malware y monitorear la memoria y el código que se dumpea. El primer malware Oligomórfico fue Whale DOS \cite{whale}, identificado por primera vez en 1990. En la siguiente imagen, la rutina de desencriptado se utiliza para desencriptar el cuerpo y evitar la detección del malware.
 	
 	\begin{figure}[H]
 		\centering
@@ -383,7 +383,7 @@
 	\begin{itemize}
 		\item El tamaño del código infeccioso era constante (Polimer.512.A y Vienna \cite{vienna}).
 		\item Adjuntando o preadjuntando al fichero objetivo, puede ser detectado por escaneo de firma.
-		\item Segmentos de código similares entre generaciones del malware pueden detectarse por análisis de entropía
+		\item Segmentos de código similares entre generaciones del malware pueden detectarse por análisis de entropía.
 	\end{itemize}
 
 	\paragraph{Ejemplos de malware polimórfico:} 
@@ -398,18 +398,18 @@
 		\item Wannacry. Este ransomware se propaga aprovechando una vulnerabilidad en el protocolo de Windows Server Message Block (SMB). Este protocolo permite la comunicación entre máquinas Windows en red. Explotó en 2017 infectando a más de 230,000 computadoras en todo el mundo, causando daños valorados en miles de dólares. Fue difundido por EternalBlue, un exploit de Zero-Day que usa una versión antigua del protocolo SMB. Se cree que fue creado por la Agencia de Seguridad Nacional de EE.UU. (NSA) y luego obtenido por los Shadow Brokers. \cite{wannacry}
 	\end{itemize}
 	
-	\subsection{Metamorphism}
-	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el cuerpo constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer una Subrutine Reordering. En el caso del gráfico anterior(b), la separación entre el desencriptador y el cuerpo malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un cuerpo del malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor me mutación que contiene muchos subprocesos.
+	\subsection{Metamorfismo}
+	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el cuerpo constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer un reordenamiento de subrutinas. En el caso del gráfico anterior(b), la separación entre el desencriptador y el cuerpo malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un cuerpo del malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor me mutación que contiene muchos subprocesos.
 	
-	\subsection{Metamorphic Engine}
+	\subsection{Motor Metamórfico}
 	Es el responsable de la ofuscación reconstrucción del vinario para que el binario funcione. Los componentes de este motor son los siguientes:
 	\begin{itemize}
 		\item \textbf{Disassembler:} Responsable de convertir el código binario en instrucciones de ensamblador.
-		\item \textbf{Shrinker:} Eliminar la mayoraía del código basura producido por generaciones anteriores o de otro código generado por ofuscación.
+		\item \textbf{Shrinker:} Eliminar la mayoría del código basura producido por generaciones anteriores o de otro código generado por ofuscación.
 		\item \textbf{Permutor:} Lleva a cabo la mayoría de la ofuscación utilizando permutaciones y subrutinas, muchas veces de forma aleatoria. También hace inserción de instrucciones \textit{jmp}
 		\item \textbf{Expander:} Sustituye instrucciones para convertirlas en otro conjunto de instrucciones equivalente, además los registros se reasignan y las variables se vuelven a seleccionar utilizando tablas de sustitución. Código basura y código que no hace nada se añade y las funciones se alinean.
 		\item \textbf{Assembler:} Reestructura el control de flujo y reconvierte el código ensamblador otra vez al código binario donde se vuelve funcional otra vez.
-		\item \textbf{Viral Code:} Contiene las instrucciones principales que se ejecutarán en todas las generaciones de malware- También contine las instrucciones que coordina el motor de mutación y otros componentes.    
+		\item \textbf{Viral Code:} Contiene las instrucciones principales que se ejecutarán en todas las generaciones de malware- También contiene las instrucciones que coordina el motor de mutación y otros componentes.    
 	\end{itemize}
 
 	Los pasos de \textbf{Permutor} y \textbf{Expander} se utilizan de forma sofisticada en los W32/Zmist \cite{zmist} y W32/Etap \cite{etap}
@@ -436,23 +436,23 @@
 		\caption{Pasos del Motor Metamórfico para Desencriptar}
 	\end{figure}
 	
-	\subsection{Encryption}
-	La primera forma de encriptación fue por el Malware CASCADE utilizando un simple \textit{XOR} \cite{cascade}
+	\subsection{Encriptación}
+	La primera forma de encriptación fue por el Malware CASCADE utilizando un simple \textit{XOR} \cite{cascade}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=4cm]{images/cascade.png}
-		\caption{Diagrama de funcionamiento del Malware CASCADE}
+		\caption{Diagrama de funcionamiento del malware CASCADE}
 	\end{figure}
 	Más adelante, el malware evolucionó de forma que en lugar de tener una sóla encriptación, tienen docenas de ellas, como en el caso del DOS/Whale en 1990 \cite{whale} o de forma aleatoria como en el caso de W32/MetaPHOR \cite{metaphor}
-	La encriptación básica, puede desarollarse con una única clave byte a byte, sin embargo hay formas alternativas en la que la clave se va actualizando a cada paso o incluso utilizando los caracteres encriptados.
+	La encriptación básica, puede desarrollarse con una única clave byte a byte, sin embargo hay formas alternativas en las que la clave se va actualizando a cada paso o incluso utilizando los caracteres encriptados.
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=12cm]{images/encrypt.png}
-		\caption{Tipos de encriptación. a. Clave reutilizada. b. La clave va cambiando por cada bloue. c. Se utiliza el código cifrado para encryptar cada bloque}
+		\caption{Tipos de encriptación. a. Clave reutilizada. b. La clave va cambiando por cada bloque. c. Se utiliza el código cifrado para encriptar cada bloque}
 	\end{figure}
 
-	\subsection{Compression}
+	\subsection{Compresión}
 	Representa un nivel adicional de ofuscación. Un Packer se define como una utilidad que aplica una forma de compresión al ejecutable, tanto para reducir el tamaño del fichero, evitar el análisis de entropía o introducir una capa de ofuscación en el encabezado PE. Se estima que el 80\% del malware utiliza algún tipo de empaquetador así como el 90\% de todos los gusanos.
 	
 	Dos de los Packer más populares son UPX \cite{upx} y ASPACK \cite{aspack}
@@ -465,7 +465,7 @@
 
 	
 	\newpage
-	\section{Análisis de Entropía}
+	\section{Análisis de Entropía\label{entropy}}
 	El término científico Entropía se define generalmente como la medida de aleatoriedad o desorden de un sistema, lo cual es importante para la evasión de Antivirus. El malware suele contener código altamente randomizado, encriptado u decodificado(ofuscado) para hacer el análisis y la detección difíciles. Uno de los métodos que utilizan los productos Anti Malware es un análisis de entropía para identificar ficheros potencialmente maliciosos y Payloads.
 	
 	Es importante entender este concepto porque cuando se ofusca el código, se suele tener en cuenta que la entropía varía creada por los cambios que se eligen. Una cosa es cambiar la firma o hash pero no se suele tener en cuenta al nivel de entropía, pero los AV/EDR sofisticados sí lo hacen.
@@ -496,7 +496,7 @@
 			return entropy
 		\end{lstlisting}
 	\end{scriptsize}
-	En teoría, cuando la entropía supera \textit{3.75} significa que ese texto no está escrito por un humano. 
+	En teoría, cuando la entropía supera \textbf{3.75} significa que ese texto no está escrito por un humano. 
 	Utilizando las adaptaciones del algoritmo de Shannon en \cite{shannon1} y \cite{obfuscationbible} vamos a hacer una herramienta que nos indique el nivel de ofuscación de un fichero en JavaScript.
 	
 	
@@ -571,7 +571,7 @@
 	\subsection{WJworm}
 	\textit{Vengeance Justice Worm} es un malware en JavaScript que combina caracrerísticas de Gusano, Robo de Información, Troyano de Acceso Remoto (RAT), Malware de Denegación de Servicio (DOS) y spam-bot.Fue descubierto en 2016.
 	
-	Se propaga por adjuntos de email infectando dispositivos externos.
+	Se propaga por adjuntos de email infectando dispositivos de almacenamiento externo.
 	
 	Una vez que se ejecuta por la víctima, el VJWorm ofuscado, enumera los dispositivos instalados, y si un dispositivo se encuentra, lo infecta.
 	
@@ -625,7 +625,7 @@
 	Emplea Cobalt Strike\cite{cobaltstrike} como malware de seguimiento posterior a una infracción.\footnote{Herramienta de Red Team para probar los sitemas y sus mecanismos de protección. }
 	
 	\newpage
-	\section{Pasos para Desofuscar un Código Malware en JavaScript}
+	\section{Pasos para Desofuscar un Código Malware en JavaScript\label{desobfuscation}}
 		
 	\subsection{JavaScript Beautifully}
 	En ocasiones nos encontramos con código en JavaScript que está escrito en una sola línea, como ocurre con la muestra \textit{2b0c9059feece8475c71fbbde6cf4963132c274cf7ddebafbf2b0a59523c532e.js} del malware WJWorm. Para ello, tenemos que utilizar la herramienta JavSCript Beautify de \href{https://gchq.github.io/CyberChef}{CyberChef}
@@ -644,7 +644,7 @@
 	Considerando el siguiente ejemplo, no se va a ejecutar nada:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 1}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE}, language={Java}]
 			function hello(message) {
 				console.log(message)
 			}
@@ -653,7 +653,7 @@
 	Sin embargo, si ejecutamos este otro, sí se nos ejecutará la función:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 2}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE}, language={Java}]
 			function hello(message) {
 				console.log(message)
 			}
@@ -665,7 +665,7 @@
 	Ahora vamos a hacer IIFFE de este código. También se ejecutará la función.
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 3}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE}, language={Java}]
 			(function hello(message) {
 				console.log(message)
 			})('This is test')
@@ -682,7 +682,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de IIFFE 4}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de IIFFE}, language={Java}]
 			(function(quhuvu6) {
 				
 				// ...
@@ -715,7 +715,7 @@
 	Vamos a renombrar \verb*|fahomyfo| a un nombre con sentido para verlo mejor. En la función, se declara esta variable como array y luego tras un for y cierta lógica, se devuelve un resultado,a sí que llamaremos a la variable \verb*|result|:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 2}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			function cicuza(syhri) {
 				var result = [];
 				for (var segovmiw4 = parseInt((0).toString(36)) /*CN1b367Z19XZqi8XgI67*/ ; segovmiw4 < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")]; segovmiw4 += parseInt((2).toString(36))) {
@@ -730,7 +730,7 @@
 	Ahora vamos a ver el bucle \verb*|for|. Primero definimos el valor inicial de la variable con la que empieza:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 3}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			for (var segovmiw4 = parseInt((0).toString(36)) /*CN1b367Z19XZqi8XgI67*/ ; ....
 		\end{lstlisting}
 	\end{scriptsize}
@@ -749,7 +749,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 4},language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores},language={Java}]
 			function cicuza(syhri) {
 				var result = [];
 				for (var i = 0; i < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")]; i += parseInt((2).toString(36))) {
@@ -762,7 +762,7 @@
 	Ahora nos vamos a enfocar en el siguiente código:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 5}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			i < syhri["l" + ("F", "T", "H", "e") + "n" + ("G", "n", "O", "g") + (29).toString(36) + ("u", "X", "U", "p", "h")];
 		\end{lstlisting}
 	\end{scriptsize}
@@ -783,7 +783,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 6}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			function cicuza(val) {
 				var result = [];
 				for (var i = 0; i < val["length"]; i += 2) {
@@ -800,7 +800,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 7}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			let arr = [] // declare Array object named arr
 			arr.push(10) // adds 10 as a first element of Array arr
 			arr.push(20) // adds 20 as a second element
@@ -811,7 +811,7 @@
 	Si observamos la siguiente línea:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 8}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			parseInt(val["s" + "u" + "b" + "s" + ("M", "h", "M", "U", "f", "t") + ("M", "q", "r")](i, (85, 19, 84, 9, 2)), parseInt((42).toString(0x24)) /*uShFAoMcgqPvcds6w2xD*/ )
 		\end{lstlisting}
 	\end{scriptsize}
@@ -821,7 +821,7 @@
 	Así que tendremos lo siguiente hasta ahora:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 9}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores}, language={Java}]
 			parseInt(val["substr"](i, (85, 19, 84, 9, 2)), parseInt((42).toString(0x24)) /*uShFAoMcgqPvcds6w2xD*/ )
 		\end{lstlisting}
 	\end{scriptsize}
@@ -830,7 +830,7 @@
 
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores 10}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadore}, language={Java}]
 			val["substr"](i, 2)
 		\end{lstlisting}
 	\end{scriptsize}
@@ -855,7 +855,7 @@
 	Si cogemos la primera parte del String \verb*|"41553a304f0b442551284206"|, 41 pasa a ser 65, 55, 85, 3a se convierte en 58, 30 en 48, 4f en 79 y así en adelante. Al final acabará siendo un array que contiene valores decimales, que será la variable \verb*|defiq| del malware
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de operadores post}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de operadores final}, language={Java}]
 			(...)
 			var defiq = cicuza(quhuvu6);   // here we are so far :)
 			var permy = "H@D~7a84O";
@@ -872,7 +872,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 1}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			function doubleX(x) {
 				return x * 2
 			}
@@ -884,7 +884,7 @@
 	Vamos a ofuscar este código:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 2}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			let xcf = new Function("x","return x * 2")
 			
 			xcf(10)   // returns 20 as well
@@ -898,7 +898,7 @@
 	Es decir, sustituyendo el código anterior:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 3}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			let xcf = a.forEach.constructor("x","return x * 2")
 			
 			xcf(10)  // yep, it works! 20
@@ -909,7 +909,7 @@
 		
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 4}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			let sdfgfdg = "".substr
 			sdfgfdg.call("malware",1,2)   // "al"
 		\end{lstlisting}
@@ -919,7 +919,7 @@
 
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 5}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			"malware".substr(1,2)  // "al"
 		\end{lstlisting}
 	\end{scriptsize}
@@ -929,7 +929,7 @@
 	Vamos a aplicar esto al código de nuestro malware:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 6}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			var xewubdiwhit = "kydka"[(12).toString(36) + (24).toString(36) + ("r", "w", "h", "Z", "n") + ("n", "X", "L", "s", "w", "s") + "t" + (27).toString(36) + "u" + "c" + ("d", "m", "b", "t") + ("z", "E", "z", "n", "o") + ("N", "J", "r")];
 		\end{lstlisting}
 	\end{scriptsize}
@@ -937,7 +937,7 @@
 	Entonces esto acabará siendo:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 7}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			var xewubdiwhit = "kydka"["constructor"]
 		\end{lstlisting}
 	\end{scriptsize}
@@ -946,14 +946,14 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 8}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			var fnConstructor = String.constructor
 		\end{lstlisting}
 	\end{scriptsize}
 	Así que el código de nuestro malware quedará de la siguiente manera:
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de obtener el constructor 9},  language={Java}]
+		\begin{lstlisting}[caption={Ejemplo ofuscación con constructor}, language={Java}]
 			(function(quhuvu6) {
 				var defiq = cicuza(quhuvu6);
 				var permy = "H@D~7a84O";
@@ -975,7 +975,7 @@
 	
 	\begin{scriptsize}
 	\estiloR
-	\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 1},  language={Java}]
+	\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos},  language={Java}]
    while (mirjokbynet <= permy[("h", "g", "B", "W", "l") + "e" + (23).toString(0x24) + "g" + ("u", "Z", "W", "u", "t") + (17).toString(36)]) {
 			dikol = (permy[("M", "H", "s") + ("C", "N", "D", "u") + (11).toString(0x24) + (28).toString(0x24) + ("T", "k", "t") + "r"](permy[(21).toString(0x24) + "e" + "n" + (16).toString(36) + ("L", "S", "x", "t") + ("I", "D", "h") /*Q5E278CBpoixvOtUNpix*/ ] - mirjokbynet))[("d", "R", "p", "s") + ("H", "K", "A", "s", "D", "p") + "l" + "i" + ("Y", "b", "h", "t") /*O7MOfVrRkP9RlXlfKLxi*/ ]('');
 			for (var juqno = +!!false; juqno < defiq[("R", "t", "E", "l") + ("y", "e", "f", "R", "e") + (23).toString(36) + (16).toString(36) + "t" + "h" /*H3RMPYzEeu55OVeGgb1v*/ ]; juqno++) {
@@ -992,7 +992,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 2}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos}, language={Java}]
 			
 			while (k <= permy.length) {
 				dikol = (permy.substr(permy.length - k)).split('');
@@ -1010,7 +1010,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 3}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos}, language={Java}]
 		 while (k <= 9) {   // 9 is value of permy.length
 		\end{lstlisting}
 	\end{scriptsize}
@@ -1019,7 +1019,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 4}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos}, language={Java}]
 			dikol = (permy.substr(permy.length - k)).split('');
 		\end{lstlisting}
 	\end{scriptsize}
@@ -1030,7 +1030,7 @@
 	
 	\begin{scriptsize}
 		\estiloR
-		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos 5}, language={Java}]
+		\begin{lstlisting}[caption={Ejemplo de Operadores Lógicos}, language={Java}]
 			for (var j = +!!false; j < defiq.length; j++) {
 				defiq[j] = defiq[j] ^ dikol[j % dikol.length].charCodeAt(0);
 			}
@@ -1073,7 +1073,6 @@
 		\centering
 		\includegraphics[width=15cm]{images/pdf2.png}
 		\caption{Eval + conjunto de enteros}
-		
 	\end{figure}
 
 	\subsubsection{Caracteres en Unicode}
@@ -1140,25 +1139,671 @@
 	\end{figure}
 	
 	\subsection{Entropía}
-	Si queremos anlalizar la entropía de Shannon de un fichero, tenemos dos opciones: línea por línea o del fichero completo.
+	Si queremos analizar la entropía de Shannon de un fichero, tenemos dos opciones: línea por línea o del fichero completo.
 	La diferencia es que si lo hacemos línea por línea, solamente nos mostrará las líneas sospechosas ya que en teoría si la entropía nos da mayor de 3.75, se supone que ese texto no está escrito por un humano.
 	
 	\subsubsection{Línea por Línea}
-	El comando sería \verb*|freyja -f filein.js -e line|
+	El comando sería:
+		
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Análisis de Entropía por líneas}, language={bash}]
+			freyja -f filein.js -e line
+		\end{lstlisting}
+	\end{scriptsize}
+		
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=18cm]{images/line_entropy.png}
 		\caption{Entropía por líneas}
 	\end{figure}
 	\subsubsection{Fichero completo}
-		El comando sería \verb*|freyja -f filein.js -e file|
+		El comando sería:
+		\begin{scriptsize}
+			\estiloR
+			\begin{lstlisting}[caption={Análisis de Entropía del fichero completo}, language={bash}]
+				freyja -f filein.js -e file
+			\end{lstlisting}
+		\end{scriptsize}
+				
+				
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=18cm]{images/file_entropy.png}
 			\caption{Entropía del fichero completo}
 		\end{figure}
 	
-	\subsection{Repositorios para probar}
+	\subsubsection{Código fuente}
+	Similar al que se ha explicado en la sección \ref{entropy}, pero adaptado a nuestra tool:
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Análisis de Entropía del fichero completo}, language={python}]
+			
+			"""
+			    Calculates the Shannon entropy of a UTF-8 encoded string
+			"""
+			def entropy_check(string):
+			    # decode the string as UTF-8
+			    unicode_string = string.decode('utf-8')
+			
+			    # get probability of chars in string
+			    prob = [float(unicode_string.count(c)) / len(unicode_string) for c in dict.fromkeys(list(unicode_string))]
+			
+			    # calculate the entropy
+			    entropy = - sum([p * math.log(p) / math.log(2.0) for p in prob])
+			
+			    return entropy
+			
+			
+			"""
+			    Gets the string we are going to analyse, line per line or the full string from the file
+			"""
+			def calculate_entropy(filename, option):
+			    option = option.upper()
+			
+			    if option == "FILE":
+			        with open(filename, 'rb') as f:
+			            content = f.read()
+			            print(f"File entropy is {entropy_check(content)}, if higher than 3.75 is not human written")
+			
+			
+			    elif option == "LINE":
+			        with open(filename, 'rb') as f:
+			            content = f.readlines()
+			
+			            for line in content:
+			                entropy = entropy_check(line)
+			                if entropy > 3.75:
+			                    line_str = line[:-1]
+			                    line_str = line_str.decode('utf-8')
+			
+			                    print(f"Entropy {entropy}, code: {line_str}")
+			
+			
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\subsection{Desofuscación}
+	Se han desarrollado varias de las técnicas del apartado \ref{desobfuscation} en esta herramienta.
+	Para que nos analice la herramienta el comando es el siguiente:
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript}, language={bash}]
+			freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
+		\end{lstlisting}
+	\end{scriptsize}
+	\begin{itemize}
+		\item \verb*|-f| Fichero a desofuscar.
+		\item \verb*|-o| Fichero de salida desofuscado.
+		\item \verb*|-l| Nivel de ofuscación. Le indicamos la técnica que queremos que utilice.
+		\begin{itemize}
+			\item Nivel 0: Todas las opciones
+			\item Nivel 1: Técnica \textit{beautify}, tabular el fichero y darle formato al JavaScript.
+			\item Nivel 3: Parsear los caracteres Unicode a Strings.
+			\item Nivel 4: Desofuscar la función \verb*|toString|.
+			\item Nivel 5: Desofuscar la función  \verb*|toString| con número hexadecimal.
+			\item Nivel 6: Desofuscar la función  \verb*|eval| cuando tiene una lista de números.
+			\item Nivel 7: Desofuscar la función  \verb*|unescape| cuando contiene caracteres.
+			\item Nivel 8: Desofuscar conjuntos de caracteres.
+			\item Nivel 9: Desofuscar la función  \verb*|parseInt|.
+			\item Nivel 10: Concatena caracteres aunque estén en varias líneas.
+		\end{itemize}
+	\end{itemize}
+
+	\subsubsection{Ejemplo de Nivel 1: Beautify}
+	Para ello, se ha utilizado la librería \verb*|jsbeautifier| de Python:
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 1: Beautify}, language={python}]
+		"""
+   Cleans the javascript file beautifying it
+		"""
+		def beautify_file(filename):
+   res = jsbeautifier.beautify_file(filename, options)
+		
+   return res
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 1: Beautify}, language={bash}]
+			freyja -f ./samples/Sample1/ejercicio6.js -l 1
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/level1.png}
+		\caption{Nivel 1: Beautify Ofuscado} 
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=5cm]{images/level1_after.png}
+		\caption{Nivel 1: Beautify Desofuscado}
+	\end{figure}
+	
+		\subsubsection{Ejemplo de Nivel 2: Parsear Hexadecimal}
+		Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se buscan los caracteres Hexadecimales que suelen ser 2 números que empiezan por \verb*|\x| y luego se parsean a String:
+		\begin{scriptsize}
+			\estiloR
+			\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 2: Hexadecimal}, language={python}]
+
+			"""
+			    Parse hex numbers to char
+			"""
+			def parse_hex(data):
+			    def replace_hex(match):
+			        try:
+			            decoded = bytes.fromhex(match.group(1)).decode('utf-8')
+			        except UnicodeDecodeError:
+			            decoded = bytes.fromhex(match.group(1)).decode("iso-8859-1")
+			        return decoded
+			
+			    pattern = r'\\x([0-9a-fA-F]{2})'
+			
+			    data = re.sub(pattern, replace_hex, data)
+			
+			    return data
+			\end{lstlisting}
+		\end{scriptsize}
+		
+		\begin{scriptsize}
+			\estiloR
+			\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 2: Hexadecimal}, language={bash}]
+				freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+			\end{lstlisting}
+		\end{scriptsize}
+		
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=15cm]{images/level2.png}
+			\caption{Nivel 3: Hexadecimal Ofuscado} 
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=15cm]{images/level2_after.png}
+			\caption{Nivel 3: Hexadecimal Desofuscado} 
+		\end{figure}
+		
+	
+	\subsubsection{Ejemplo de Nivel 3: Parsear Unicodes}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se buscan los caracteres unicode que suelen ser 4 caracteres comenzando por \verb*|\u| y luego se parsean a String:
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 3: Unicode}, language={python}]
+		"""
+Parse char unicode to char
+		"""
+		def parse_unicode(data):
+def replace_unicode(match):
+    return chr(int(match.group(1), 16))
+		
+pattern = r'\\u([0-9a-fA-F]{4})'
+		
+data = re.sub(pattern, replace_unicode, data)
+		
+return data
+		
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 3: Unicode}, language={bash}]
+			freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=10cm]{images/level3.png}
+		\caption{Nivel 3: Unicode Ofuscado} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=10cm]{images/level3_after.png}
+		\caption{Nivel 3: Unicode Desofuscado} 
+	\end{figure}
+	
+	\subsubsection{Ejemplo de Nivel 4 y 5: Reemplazar la función toString}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se busca texto tipo \verb*|(23).toString(0x24)| o \verb*|(14).toString(36)|
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 4 y 5: toString}, language={python}]
+
+"""
+    Replaces toString function parsing its contect to string integer equivalent
+    after parsing the integer to the new base
+"""
+def replace_tostring(data):
+    # Regular expression pattern to match (number).toString( number )
+    pattern = r'\(\s*(\d+)\s*\)\s*\.toString\(\s*(\d+)\s*\)'
+
+    # Find all matches of the pattern
+    matches = re.finditer(pattern, data, re.MULTILINE)
+
+    length = 0
+
+    for match in matches:
+        # Extract the two numbers from the matched groups
+        first_number = int(match.group(1))
+        second_number = int(match.group(2))
+
+        to_string = numpy.base_repr(first_number, second_number)
+
+        to_string = "\"" + to_string + "\""
+
+        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+
+        length = length + len(match.group(0)) - 3
+
+    return data
+
+
+"""
+    Replaces toString function parsing its contect to string integer equivalent
+    after parsing the hex to integer and then to the new base
+"""
+def replace_hex_tostring(data):
+    # Regular expression pattern to match (number).toString( number )
+    pattern = r'\(\s*(\d+)\s*\)\s*\.toString\(\s*(0x[\da-fA-F]+)\s*\)'
+
+    # Find all matches of the pattern
+    matches = re.finditer(pattern, data, re.MULTILINE)
+
+    length = 0
+
+    for match in matches:
+        # Extract the two numbers from the matched groups
+        first_number = int(match.group(1))
+        second_number = match.group(2)
+
+        second_number = int(second_number, 16)
+
+        to_string = numpy.base_repr(first_number, second_number)
+
+        to_string = "\"" + to_string + "\""
+
+        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+
+        length = length + len(match.group(0)) - 3
+
+    return data
+
+		
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 4 y 5: toString}, language={bash}]
+			freyja -f ./samples/simple_js_malware_code/do_not_run.js -l 4
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level4.png}
+		\caption{Nivel 4 y 5: toString Ofuscado} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level4_after.png}
+		\caption{Nivel 4: toString Desofuscado} 
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level5_after.png}
+		\caption{Nivel 4: toString Hex Desofuscado} 
+	\end{figure}
+	
+	\subsubsection{Ejemplo de Nivel 6: Parsear eval si tiene una lista de números}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se buscan listas de números como en la muestra extraída de un pdf \verb*|sample_2.js| que contiene una lista de números dentro de una expresión \verb*|eval|:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 6: Eval}, language={python}]
+		"""
+		    Replaces eval with a list of numbers
+		"""
+		def parse_eval_list_numbers(data):
+		    def replace_with_chars(match):
+		        numbers = re.findall(r'\d+', match.group(1))
+		        chars = ''.join(chr(int(num)) for num in numbers)
+		        return "\'" + chars + "\'"
+		
+		    pattern = r"'([^']*?\((?:\d+(?:\s*,\s*)?)+\))'"
+		    data = re.sub(pattern, replace_with_chars, data)
+		
+		    return data
+		
+		
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 6: Eval}, language={bash}]
+			freyja -f ./samples/sample_2_extracted/sample_2.js -l 6
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level6.png}
+		\caption{Nivel 6: Eval Ofuscado} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level6_after.png}
+		\caption{Nivel 6: Eval Desofuscado} 
+	\end{figure}
+	
+
+	\subsubsection{Ejemplo de Nivel 7: Parsear la función unescape}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se desofusca el texto que está en Unicode o en formato URL parseándolo a String:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 7: Eval}, language={python}]
+		
+		"""
+		    Replaces unescape function parsing the content to string
+		"""
+		def parse_unescape(data):
+		    pattern = r'unescape\([\'"]([^\'"]+)[\'"]\)'
+		
+		    def replacement(match):
+		        unicode_escaped = urllib.parse.unquote(match.group(1))
+		        replaced_unicode_escaped = unicode_escaped.replace('%', '\\')
+		        decoded_string = bytes(replaced_unicode_escaped, 'utf-8').decode('unicode_escape')
+		        return "\'" + decoded_string + "\'"
+		
+		    data = re.sub(pattern, replacement, data)
+		    return data
+
+				
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 7: unescape}, language={bash}]
+			freyja -f ./samples/javascript-malware-collection/2016/20160311/20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level7.png}
+		\caption{Nivel 7: unescape Ofuscado} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{images/level7_after.png}
+		\caption{Nivel 7: unescape Desofuscado} 
+	\end{figure}
+	
+	
+	\subsubsection{Ejemplo de Nivel 8: Parsear conjuntos de caracteres}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se buscan conjuntos de caracteres separados por \verb*|+|, ya que JavaScript sólo deja el último de la lista:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 8: Conjuntos de caracteres}, language={python}]
+				
+		
+		"""
+		    If there is a char set, it replaces it with the last value ("A", "B", "C") is "C"
+		"""
+		def parse_char_set(data):
+		    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
+		
+		    # Find all matches of the pattern
+		    matches = re.finditer(pattern, data, re.MULTILINE)
+		
+		    length = 0
+		
+		    for match in matches:
+		        to_string = "+ \"" + match.group(2) + "\" +"
+		        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+		
+		        length = length + len(match.group(0)) - 7
+		
+		    pattern = r'\+\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*'
+		
+		    # Find all matches of the pattern
+		    matches = re.finditer(pattern, data, re.MULTILINE)
+		
+		    length = 0
+		
+		    for match in matches:
+		        to_string = "+ \"" + match.group(2) + "\" "
+		
+		        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+		
+		        length = length + len(match.group(0)) - 6
+		
+		    pattern = r'\s*\((\s*"[a-zA-Z]"\s*,\s*)+\s*"([a-zA-Z])"\s*\)\s*\+'
+		
+		    # Find all matches of the pattern
+		    matches = re.finditer(pattern, data, re.MULTILINE)
+		
+		    length = 0
+		
+		    for match in matches:
+		        to_string = " \"" + match.group(2) + "\" +"
+		
+		        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+		
+		        length = length + len(match.group(0)) - 6
+		
+		    return data
+
+
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 8: Conjuntos de caracteres}, language={bash}]
+			freyja -f freyja -f ./samples/simple_js_malware_code/do_not_run.js -l 8
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{images/level8.png}
+		\caption{Nivel 8: Conjuntos de caracteres Ofuscados} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=10cm]{images/level8_after.png}
+		\caption{Nivel 8: Conjuntos de caracteres Desofuscados} 
+	\end{figure}
+	
+	
+	\subsubsection{Ejemplo de Nivel 9: Parsear la función parseInt}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se desofusca pasando a entero el parámetro de la función. En este caso reutilizamos la salida del nivel 4 \verb*|out.js|:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 9: parseInt}, language={python}]
+		
+		"""
+		    Replaces parseInt function parsing the content char to a in integer value
+		"""
+		def parse_int(data):
+		    pattern = r'parseInt\("(\d+)"\)'
+		
+		    # Find all matches of the pattern
+		    matches = re.finditer(pattern, data, re.MULTILINE)
+		
+		    length = 0
+		
+		    for match in matches:
+		        data = data[:match.start() - length] + match.group(1) + data[match.end() - length:]
+		
+		        length = length + len(match.group(0)) - 1
+		
+		    return data
+		
+
+				
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 9: parseInt}, language={bash}]
+			freyja -f out.js -l 9
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/level9.png}
+		\caption{Nivel 9: parseInt Ofuscado} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/level9_after.png}
+		\caption{Nivel 9: parseInt Desofuscado} 
+	\end{figure}
+
+	\subsubsection{Ejemplo de Nivel 10: Parsear las concatenaciones de caracteres}
+	Para ello, se ha utilizado la librería \verb*|re| de Python, muy famosa para utilzar expresiones regulares. Se concatenan todos los caracteres separados por \verb*|+|. Para el ejemplo reutilizaremos el \verb*|out.js|:
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 10: Concatenación}, language={python}]
+
+		
+		"""
+		    Appending characrers between + like "A" + "B" 
+		"""
+		def append_strings_multi(data):
+		    # Regular expression pattern to match (number).toString( number )
+		    pattern = r'[\'\"]\s+\+\s+[\'\"]'
+		
+		    # Find all matches of the pattern
+		    matches = re.finditer(pattern, data, re.MULTILINE)
+		
+		    length = 0
+		
+		    for match in matches:
+		
+		        to_string = ""
+		
+		        data = data[:match.start() - length] + to_string + data[match.end() - length:]
+		
+		        length = length + len(match.group(0))
+		
+		    return data
+		
+
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 10: Concatenación}, language={bash}]
+			freyja -f out.js -l 10
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{images/level10.png}
+		\caption{Nivel 10: Concatenación Ofuscada} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{images/level10_after.png}
+		\caption{Nivel 10: Concatenación Desofuscada} 
+	\end{figure}
+	
+	\subsection{Búsquedas de Base64}
+	Esta herramienta también puede buscar y decodificar strings de Base64 en un fichero de texto. Para ello utiliza la librería librería \verb*|re| de Python para buscar con la expresión regular referente a strings codificados en Base64:
+
+
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Búsqueda de Base64}, language={python}]
+
+		
+		"""
+		    Finds base64 between '' and "" and then deletes first and last character 
+		"""
+		def find_base64(data):
+		    base64_pattern = r'["\'](?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})["\']'
+		    base64_strings = re.findall(base64_pattern, data)
+		
+		    base64_strings_cleaned = []
+		    for match in base64_strings:
+		        match = match[1:-1]
+		        if len(match) >= 10:
+		            base64_strings_cleaned.append(match)
+		    return base64_strings_cleaned
+		
+		"""
+		    Decodes base64 and saves it to json output file
+		"""
+		def decode_base64(encoded_data):
+		    decoded_strings = []
+		    for base64_string in encoded_data:
+		        decoded_bytes = base64.b64decode(base64_string)
+		        try:
+		            decoded_string = decoded_bytes.decode("'utf-8'")
+		        except UnicodeDecodeError:
+		            decoded_string = decoded_bytes.decode("iso-8859-1")
+		
+		        decoded_dict = {'original': base64_string, 'decoded':decoded_string}
+		        decoded_strings.append(decoded_dict)
+		    return decoded_strings
+		
+		
+
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	\begin{scriptsize}
+		\estiloR
+		\begin{lstlisting}[caption={Búsqueda de Base64}, language={bash}]
+			freyja -b example.txt -o example.json
+		\end{lstlisting}
+	\end{scriptsize}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{images/base64_before.png}
+		\caption{Búsqueda de Base64 Ofuscada} 
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=18cm]{images/base64_after.png}
+		\caption{Búsqueda de Base64 Desofuscada} 
+	\end{figure}
+
 	
 	\newpage
 	\listoffigures
