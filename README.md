@@ -74,7 +74,7 @@ freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
   * Level 9: Deobfuscate parseInt function.
   * Level 10: Append Chars.
 
-## Base64 Search:
+### Base64 Search:
 * To look for base64 strings and decode them:
 
 ```commandline
