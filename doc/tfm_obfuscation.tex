@@ -84,7 +84,7 @@
 		\vspace{0.5cm}
 		\LARGE
 		Universidad Católica de Murcia\\
-		ENIT - Campus Internacional de Ciberseguridad
+		ENIIT - Campus Internacional de Ciberseguridad
 		
 		
 		\vspace{0.5cm}	
@@ -128,7 +128,7 @@
 	
 	Además, también es una de las muchas formas que tiene el malware para evadir el análisis estático o para evitar ser detectado por los métodos tradicionales anti-malware que se basan en hashes o firmas y strings para su detección.
 	
-	Los antivirus tradicionales hacen sus análisis para detectar el malware, normalmente comparando el hash del fichero que están analizando con los hashes que tienen en sus Base de Datos, en el caso de un analista, sería por ejemplo, compararlo con los hashes en la base de datos de \href{https://www.virustotal.com/gui/}{Virus Total} \cite{virustotal}. 
+	Los antivirus tradicionales hacen sus análisis para detectar el malware, normalmente comparando el hash del fichero que están analizando con los hashes que tienen en sus Base de Datos, en el caso de un analista, sería por ejemplo, compararlo con los hashes en las bases de \href{https://www.virustotal.com/gui/}{VirusTotal} \cite{virustotal}. 
 	
 	Otro método de análisis de código suele basarse en analizar strings. Consiste en buscar y analizar strings legibles de texto (en ASCII o Unicode) en un fichero que puede que no tenga caracteres legibles, porque sea un binario, por ejemplo. Esos strings de texto, pueden mostrarnos nombres de ficheros, IPs, URL, peticiones HTTP, claves de registro u otras cadenas que nos puedan indicar cómo funciona dicho malware. 
 	
@@ -143,11 +143,12 @@
 	
 	\newpage
 	\section{Diagrama evolutivo del malware}
+	\textbf{Fuente:} \textit{Metamorphic Malware and Obfuscation -A Survey of Techniques, Variants and Generation Kits} \cite{techniques}
 	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=14cm]{images/history.jpeg}
-		\caption{Diagrama histórico}
+		\caption{Diagrama histórico del las variantes del malware, técnicas y motores de mutación. }
 	\end{figure}
 
 	\newpage
@@ -184,7 +185,7 @@
 	
 	
 	\subsection{XOR} 
-	Este método es bastante polpular para ocultar datos y que no puedan ser analizados. Lo que hace es intercambiar los contenidos de dos varibles dentro del código, como por ejemplo:
+	Este método es bastante popular para ocultar datos y que no puedan ser analizados. Lo que hace es intercambiar los contenidos de dos varibles dentro del código, como por ejemplo:
 	
 	\begin{scriptsize}
 		\estiloR
@@ -194,7 +195,26 @@
 			XOR EBX, EAX
 		\end{lstlisting}
 	\end{scriptsize}
+	
+	XOR es una forma muy sencilla de ofuscación y encriptación ya que es muy fácil volver al valor original o recuperar una variable ofuscada ya que cualquier valor \textit{xoreado} consigo mismo da 0. Veamos la tabla de operación de XOR:
+	
+	\begin{center}
+	\begin{tabular}{ |p{1.5cm}|p{1.5cm}||p{1.5cm}|  }
+	 \hline
+	 \multicolumn{3}{|c|}{Operación XOR} \\
+	 \hline
+	  Valor 1 & Valor 2 & Resultado\\
+	 \hline
+	 0 & 0 & 0 \\ 
+	 0 & 1 & 1 \\  
+	 1 & 0 & 1 \\
+	 1 & 1 & 0\\
+	 \hline
+	\end{tabular}
+	\end{center}
+	
 
+	
 	\subsection{Reasignamiento de registros}
 	Es otra técnica simple que cambia registros por cada generación mientras el código del programa y su comportamiento siguen igual. En el siguiente código, se cambian los registros al inicio y se vuelven a cambiar al final, dejando la funcionalidad como estaba. El malware W95/Regswap \cite{regswap}
 	\begin{scriptsize}
@@ -284,8 +304,24 @@
 	\subsection{Integración de Código}
 	Fue por primera vez visto en W95/Zmist \cite{zmist}, le indica al código malicioso, unirse al código del programa objetivo, el malware decompila el programa e inyecta el código y lo reensambla para poder utilizarlo.
 	
+	Lo que hace este tipo de malware es buscar un fichero/comando/código o binario para inyectar código propio dentor de él, como si fuese un código parásito y luego si es necesario lo recompila. Es una forma de ofuscación muy avanzada.
+	
+	En el caso de Zminst, éste se inyectaba buscando instrucciones \verb*|jmp| en ficheros objetivo. Inyectando su código con una copia encriptada suya, reescribía el fichero.
+	
+	A continuación vemos un ejemplo de una inyección de un programa a través de una instrucción de código \verb*|jmp| \cite{parasite}
+
+	\newpage
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=12cm]{images/code_insertion.png}
+		\caption{Ejemplo de inyección de un programa parásito }
+	\end{figure}
+	
+	
+	\newpage
 	\subsection{Expresiones MBA}
-	Las expresiones MBA sirven para ofuscar el código utilizando operadores booleanos o polinomios dejando la funcionalidad del código intacta. A continuación vemos dos expresiones equivalentes:
+	Las expresiones MBA o Mixed Boolean-Arithmetic sirven para ofuscar el código utilizando operadores booleanos o polinomios dejando la funcionalidad del código intacta. Es un método para preservar la semántica a través de transformaciones con simples expresiones, para dificultar el análisis del código. Esta técnica consiste en la mezcla de expresiones aritméticas y operaciones booleanas. El código binario con ofuscación MBA puede ocultar los datos y algoritmos de análisis estáticos y dinámicos, incluyendo los análisis avanzados. 
+	
 	
 	\begin{scriptsize}
 		\estiloR
@@ -306,6 +342,14 @@
 			
 		\end{lstlisting}
 	\end{scriptsize}
+	
+	A continuación podemos ver más ejemplos de expresiones booleanas y sus equivalentes en MBA:
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=10cm]{images/mba_table.png}
+			\caption{Ejemplos de equivalencias en expresiones MBA }
+		\end{figure}
+	
 	
 	\subsection{Expresiones Opacas}
 	Normalmente se refieren a expresiones que siempre toman el valor de True o False, conocidas en tiempo de compilación pero son evaluadas en tiempo de ejecución. Aquí tenemos tres ejemplos donde añadiendo este tipo de expresiones condicionales, siempre se va a ejecutar el código que nos interese:
@@ -399,10 +443,10 @@
 	\end{itemize}
 	
 	\subsection{Metamorfismo}
-	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el cuerpo constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer un reordenamiento de subrutinas. En el caso del gráfico anterior(b), la separación entre el desencriptador y el cuerpo malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un cuerpo del malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor me mutación que contiene muchos subprocesos.
+	Este tipo de malware introdujo la idea por primera vez la idea de que no pueden existir dos generaciones de malware con firmas similares. En el gráfico anterior (b), se muestra el virus metamórfico. A diferencia del polimorfismo, el código viral está ofuscado, estando todo el virus presente en un estado ofuscado. Esto introduce la idea de que los Metamórficos son body-Polimórficos, que como resultado no tienen el cuerpo constante. Los primeros virus de tipo metamórfico fueron W95/Regswap en 1998 \cite{regswap} seguido del W32/Ghost en el 2000 \cite{ghost}. Este último contenía 10 submódulos, 3.6 millones de posibles variaciones para hacer un reordenamiento de subrutinas. En el caso del gráfico anterior(b), la separación entre el desencriptador y el cuerpo malicioso no es posible y la ofuscación  hace que el cifrado ya no sea necesario. Además la rutina de descrifrado se encuentra en el código benigno, así que no necesita desempacar para crear un cuerpo del malware constante como en el caso del polimorfismo. Uno de los generadores metamórficos más utilizados es W32/NGVCK creado en 2001 \cite{ngvck} creado en 2001. Este tipo de malware tiene un motor de mutación que contiene muchos subprocesos.
 	
 	\subsection{Motor Metamórfico}
-	Es el responsable de la ofuscación reconstrucción del vinario para que el binario funcione. Los componentes de este motor son los siguientes:
+	Es el responsable de la ofuscación reconstrucción del binario para que éste funcione. Los componentes de este motor son los siguientes:
 	\begin{itemize}
 		\item \textbf{Disassembler:} Responsable de convertir el código binario en instrucciones de ensamblador.
 		\item \textbf{Shrinker:} Eliminar la mayoría del código basura producido por generaciones anteriores o de otro código generado por ofuscación.
@@ -1113,6 +1157,8 @@
 	
 	\newpage
 	\section{Freyja Deobfuscation Tool}
+	\href{https://github.com/drkrysSrng/freyja}{@drkrysSrng/freyja}
+	
 	Se ha desarrollado una herramienta, basándonos en los análisis que hemos mencionado anteriormente para facilitar la desofuscación de malware en JavaScript y su análisis. Tiene las siguientes funcionalidades:
 	
 	\begin{itemize}
@@ -1822,7 +1868,7 @@ def replace_hex_tostring(data):
 		\href{https://minerva-labs.com/blog/malware-evasion-techniques-obfuscated-files-and-information/}{https://minerva-labs.com/blog/malware-evasion-techniques-obfuscated-files-and-information/}
 		
 		\bibitem{yara}
-		Reglas Yara en Virus Total
+		Reglas Yara en VirusTotal
 		
 		\href{https://virustotal.github.io/yara/}{https://virustotal.github.io/yara/}
 		
@@ -1832,10 +1878,14 @@ def replace_hex_tostring(data):
 		\href{https://ayudaleyprotecciondatos.es/2021/04/29/malware-polimorfico/}{https://ayudaleyprotecciondatos.es/2021/04/29/malware-polimorfico/}
 		
 		\bibitem{techniques}
-		Estudio de las diferentes técnicas de Ofuscación de Malware
+		Metamorphic Malware and Obfuscation -A Survey of Techniques, Variants and Generation Kits
 		
 		\href{https://www.researchgate.net/publication/357255382_Metamorphic_Malware_and_Obfuscation_-A_Survey_of_Techniques_Variants_and_Generation_Kits}{https://www.researchgate.net/}
 		
+		\bibitem{parasite}
+		Crafting a peaceful parasite
+		
+		\href{https://compilepeace.medium.com/malware-engineering-part-0x3-crafting-a-peaceful-parasite-c8c6c9a0b010}{https://compilepeace.medium.com}
 		
 		\bibitem{mba}
 		h-c0n2020 Arnau Gámez Code obfuscation through Mixed Boolean-Arithmetic expressions

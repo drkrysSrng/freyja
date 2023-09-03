@@ -1,0 +1,103 @@
+%%%%%%%% Title slide details %%%%%%%%%%%%%%
+
+
+% Background Image
+\newcommand{\myBackround}
+{
+    \includegraphics[width=\paperwidth]{images/Background 5.png}
+}
+
+% Title
+\newcommand{\myTitle}
+{
+    Estudio práctico de técnicas de ofuscación y contramedidas aplciables
+}
+
+
+% Author
+\newcommand{\myAuthor}   
+{
+    María San José Seco \href{https://github.com/drkrysSrng/freyja}{@drkrysSrng/freyja}
+}
+
+% Affiliation
+\newcommand{\myAffiliate}
+{
+    Universidad Católica de Murcia\\
+    ENIIT - Campus Internacional de Ciberseguridad
+}
+
+% Presentation Date
+\newcommand{\myDate}   
+{
+    \today
+}
+
+% Logo 1
+\newcommand{\myLogoA}   
+{
+    \includegraphics[width=2cm]{images/logo.png}
+}
+
+% Logo 2
+\newcommand{\myLogoB}   
+{
+    \includegraphics[width=5cm]{images/logo_uni.png}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%% Title slide code %%%%%%%%%%%
+\begin{tikzpicture}[remember picture,overlay]
+
+% Background image
+\node[above right,inner sep=0pt] at (current page.south west)
+    {
+        \myBackround
+    };
+    
+% Title & Subtitle
+\node
+[
+    above=0.5cm,
+    align=center,
+    fill=black!70,
+    text=white,
+    rounded corners,
+    inner xsep=15pt,
+    inner ysep=10pt, 
+    minimum width=0.7\textwidth,
+    text width=0.6\textwidth
+] (title) at (current page.center)
+{
+    \normalsize \myTitle  
+};
+
+% Author 
+\node[ below=0.5cm] (author) at (title.south){\myAuthor};
+
+% Author 
+\node[ below=0.1cm] (affiliate) at (author.south){\small \myAffiliate};
+
+% Date
+\node[below=0.25cm] (date) at (affiliate.south){\large \myDate};
+
+% Logo A
+\node
+[
+    below right =0.25cm and 7.5cm
+] at (current page.north west)
+{
+    \myLogoA
+};
+
+% Logo B
+\node
+[
+    below left =0.25cm and 0.5cm
+] at (current page.north east)
+{
+    \myLogoB
+};
+
+\end{tikzpicture}

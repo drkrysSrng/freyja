@@ -1,0 +1,36 @@
+% beautiful title slides in Beamer
+% Model 5
+% latex-beamer.com
+
+\documentclass[aspectratio=169]{beamer}
+
+% Remove navigation bar
+\setbeamertemplate{navigation symbols}{}
+
+% Tikz package
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\titlegraphic{
+    \includegraphics[width=2cm]{images/freyja.png}
+}
+
+
+\usetheme{Boadilla}
+
+\begin{document}
+
+\begin{frame}[plain]
+
+\input{title_slides_style}
+    
+\end{frame}
+
+
+
+  \begin{frame}{Sample frame}
+    \begin{block}{Sample block}
+      Some text\footnotemark[1]
+      \footnotetext[1]{Footnote}
+    \end{block}
+  \end{frame}
+\end{document}
