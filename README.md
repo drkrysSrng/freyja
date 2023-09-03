@@ -59,7 +59,7 @@ Usually the obfuscated code returns probability values higher than a **3.75**:
 python freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
 freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
 ```
-* '-f': File to deobfuscate
+* `-f`: File to deobfuscate
 * `-o`: The output file, if not, it will be out.js
 * `-l`: Set the level 0..10
   * Level 0: All options 
@@ -81,5 +81,21 @@ freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
 python freyja -b -f file.js -o output.json 
 ```
 
+## Examples
+```
+freyja -f do_not_run.js -e line
+freyja -f do_not_run.js -e file
+freyja -f ejercicio6.js -l 1
+freyja -f b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
+freyja -f /b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+freyja -f simple_js_malware_code/do_not_run.js -l 4
+freyja -f simple_js_malware_code/do_not_run.js -l 5
+freyja -f .sample_2_extracted/sample_2.js -l 6
+freyja -f 20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
+freyja -f freyja -f do_not_run.js -l 8
+freyja -f out.js -l 9 #out from 4
+freyja -f out.js -l 10
+freyja -b example.txt -o example.json
+```
 ## MBA and OPAQUE examples
 * Here we have some examples to test MBA and OPAQUE obfuscation techniques.

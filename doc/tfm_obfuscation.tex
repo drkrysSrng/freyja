@@ -608,7 +608,7 @@
 	
 	Si bien los ataques de PowerShell son los más utilizados, los actores de amenazas maliciosos también utilizan JavaScript de Windows para muchos de los mismos fines. Fuera de un navegador, que ejecuta JavaScript de forma encapsulada, lo que limita en gran medida la interacción de ese código en el sistema operativo, Windows proporciona funciones para la ejecución de JavaScript con Windows Script Host (WSH), que ejecuta JavaScript (y otros lenguajes de secuencias de comandos compatibles con Windows) bajo los procesos de Windows \textit{wscript.exe} y \textit{cscript.exe}, lo que proporciona una superficie de ataque que los adversarios pueden aprovechar.
 	
-	El malware JavaScript puede variar desde un simple dropper destinado a entregar malwrae adicional hasta partes de malware multipropósito con todas las funciones.
+	El malware JavaScript puede variar desde un simple dropper destinado a entregar malware adicional hasta partes de malware multipropósito con todas las funciones.
 	
 	A continuación se enumerarán ejemplos de malware prominentes en el panorama JavaScript "puro" que a menudo desafían las firmas de detección estáticas mediante una gran ofuscación de código y sin emplear archivos binarios compilados. \cite{javascript_malware}
 	
@@ -636,7 +636,7 @@
 	Las variantes en VBS han sido reportadas recientemente, involucradas en campañas de espionaje en la industria aeronáutica.
 	
 	\subsection{STRRAT}
-	Es un RAT basado en Java, con un dropper/wrapper en JAvascript que fue descubierto en 2020. Su payload core (fichero .jar) contiene varias capas de ofuscación y codificación dentro del JavaScript wrapper/dropper.
+	Es un RAT basado en Java, con un dropper/wrapper en JavaScript que fue descubierto en 2020. Su payload core (fichero .jar) contiene varias capas de ofuscación y codificación dentro del JavaScript wrapper/dropper.
 	
 	STRRAT se propaga por adjuntos en emails. Su capacidad incluye funcionalidades de RAT (acceso remoto, ejecución remota de comandos), browser, email client harvesting \footnote{Conseguir cuentas de correo} y una funcionalidad ransomware, cifrando los ficheros añadiendo una extensión \textit{.crimson} al dispositivo, que pueden ser recuperados fácilmente si su contenido no se modifica.
 	
@@ -1151,7 +1151,7 @@
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=15cm]{images/base64.png}
-		\caption{Caracteres hexadecimales}
+		\caption{Caracteres en base64}
 	\end{figure}
 	
 	
@@ -1357,7 +1357,7 @@
 		\begin{scriptsize}
 			\estiloR
 			\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 2: Hexadecimal}, language={bash}]
-				freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+				freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
 			\end{lstlisting}
 		\end{scriptsize}
 		
@@ -1365,13 +1365,13 @@
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=15cm]{images/level2.png}
-			\caption{Nivel 3: Hexadecimal Ofuscado} 
+			\caption{Nivel 2: Hexadecimal Ofuscado} 
 		\end{figure}
 		
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=15cm]{images/level2_after.png}
-			\caption{Nivel 3: Hexadecimal Desofuscado} 
+			\caption{Nivel 2: Hexadecimal Desofuscado} 
 		\end{figure}
 		
 	
