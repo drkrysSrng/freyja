@@ -2,8 +2,15 @@
 
 # Freyja Deobfuscation Tool
 
-## Installation
+## Tutorial
+https://www.mediafire.com/file/pqmjs5vcqf3jvau/tutorial.mkv/file
 
+## Download
+```
+git clone --recurse-submodules https://github.com/drkrysSrng/freyja.git
+
+```
+## Installation
 * Creating virtual environment
 ```bash
 cd dev
@@ -70,14 +77,15 @@ python freyja.py -f ../samples/do_not_run.js -e file
 python freyja.py -f ../samples/ejercicio6.js -l 1
 python freyja.py -f ../samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
 python freyja.py -f ../samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
-python freyja.py -f ../samples/simple_js_malware_code/do_not_run.js -l 4
-python freyja.py -f ../samples/simple_js_malware_code/do_not_run.js -l 5
-python freyja.py -f ../samples/sample_2_extracted/sample_2.js -l 6
+python freyja.py -f ../samples/do_not_run.js -l 4
+python freyja.py -f ../samples/do_not_run.js -l 5
+python freyja.py -f ../samples/sample_2.js -l 6
 python freyja.py -f ../samples/20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
 python freyja.py -f ../samples/do_not_run.js -l 8
 python freyja.py -f ../samples/out.js -l 9 #out from 4
 python freyja.py -f ../samples/out.js -l 10
 python freyja.py -b ../samples/example.js -o example.json
+
 ```
 ## MBA and OPAQUE examples
 * Here we have some examples to test MBA and OPAQUE obfuscation techniques.
