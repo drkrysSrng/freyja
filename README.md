@@ -12,24 +12,6 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-* We need to have pyinstaller:
-
-```bash
-pip install pyinstaller
-```
-
-* To create the binary:
-
-```bash
-pyinstaller -F freyja.py
-```
-
-* Then copy the binary to `/usr/local/bin`
-
-```bash
-cp dist/freyja /usr/local/bin/
-```
-
 ## Usage
 ![usage](doc/images/usage.png)
 
@@ -83,19 +65,19 @@ python freyja -b -f file.js -o output.json
 
 ## Examples
 ```
-freyja -f do_not_run.js -e line
-freyja -f do_not_run.js -e file
-freyja -f ejercicio6.js -l 1
-freyja -f b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
-freyja -f /b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
-freyja -f simple_js_malware_code/do_not_run.js -l 4
-freyja -f simple_js_malware_code/do_not_run.js -l 5
-freyja -f .sample_2_extracted/sample_2.js -l 6
-freyja -f 20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
-freyja -f freyja -f do_not_run.js -l 8
-freyja -f out.js -l 9 #out from 4
-freyja -f out.js -l 10
-freyja -b example.txt -o example.json
+python freyja.py -f do_not_run.js -e line
+python freyja.py -f do_not_run.js -e file
+python freyja.py -f ejercicio6.js -l 1
+python freyja.py -f b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
+python freyja.py -f /b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+python freyja.py -f simple_js_malware_code/do_not_run.js -l 4
+python freyja.py -f simple_js_malware_code/do_not_run.js -l 5
+python freyja.py -f .sample_2_extracted/sample_2.js -l 6
+python freyja.py -f 20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
+python freyja.py -f freyja -f do_not_run.js -l 8
+python freyja.py -f out.js -l 9 #out from 4
+python freyja.py -f out.js -l 10
+python freyja.py -b example.txt -o example.json
 ```
 ## MBA and OPAQUE examples
 * Here we have some examples to test MBA and OPAQUE obfuscation techniques.

@@ -1194,7 +1194,7 @@
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Análisis de Entropía por líneas}, language={bash}]
-			freyja -f filein.js -e line
+			python freyja.py -f filein.js -e line
 		\end{lstlisting}
 	\end{scriptsize}
 		
@@ -1208,7 +1208,7 @@
 		\begin{scriptsize}
 			\estiloR
 			\begin{lstlisting}[caption={Análisis de Entropía del fichero completo}, language={bash}]
-				freyja -f filein.js -e file
+				python freyja.py -f filein.js -e file
 			\end{lstlisting}
 		\end{scriptsize}
 				
@@ -1275,7 +1275,7 @@
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript}, language={bash}]
-			freyja -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
+			python freyja.py -f ./samples/simple_js_malware_code/do_not_run.js -o output.js -l 2
 		\end{lstlisting}
 	\end{scriptsize}
 	\begin{itemize}
@@ -1314,7 +1314,7 @@
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 1: Beautify}, language={bash}]
-			freyja -f ./samples/Sample1/ejercicio6.js -l 1
+			python freyja.py -f ./samples/Sample1/ejercicio6.js -l 1
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1357,7 +1357,7 @@
 		\begin{scriptsize}
 			\estiloR
 			\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 2: Hexadecimal}, language={bash}]
-				freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
+				python freyja.py -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 2
 			\end{lstlisting}
 		\end{scriptsize}
 		
@@ -1399,7 +1399,7 @@ return data
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 3: Unicode}, language={bash}]
-			freyja -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
+			python freyja.py -f ./samples/b122473d00566758d09c695d191b368e0c815c65e8acc0f00da7a88e45cc8a9e.js -l 3
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1488,7 +1488,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 4 y 5: toString}, language={bash}]
-			freyja -f ./samples/simple_js_malware_code/do_not_run.js -l 4
+			python freyja.py -f ./samples/simple_js_malware_code/do_not_run.js -l 4
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1537,7 +1537,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 6: Eval}, language={bash}]
-			freyja -f ./samples/sample_2_extracted/sample_2.js -l 6
+			python freyja.py -f ./samples/sample_2_extracted/sample_2.js -l 6
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1584,7 +1584,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 7: unescape}, language={bash}]
-			freyja -f ./samples/javascript-malware-collection/2016/20160311/20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
+			python freyja.py -f ./samples/javascript-malware-collection/2016/20160311/20160311_01284d18e603522cc8bdabed57583bb3.js -l 7
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1664,7 +1664,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 8: Conjuntos de caracteres}, language={bash}]
-			freyja -f freyja -f ./samples/simple_js_malware_code/do_not_run.js -l 8
+			python freyja.py -f freyja -f ./samples/simple_js_malware_code/do_not_run.js -l 8
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1715,7 +1715,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 9: parseInt}, language={bash}]
-			freyja -f out.js -l 9
+			python freyja.py -f out.js -l 9
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1769,7 +1769,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Desofuscación de ficheros JavaScript Nivel 10: Concatenación}, language={bash}]
-			freyja -f out.js -l 10
+			python freyja.py -f out.js -l 10
 		\end{lstlisting}
 	\end{scriptsize}
 	
@@ -1833,7 +1833,7 @@ def replace_hex_tostring(data):
 	\begin{scriptsize}
 		\estiloR
 		\begin{lstlisting}[caption={Búsqueda de Base64}, language={bash}]
-			freyja -b example.txt -o example.json
+			python freyja.py -b example.txt -o example.json
 		\end{lstlisting}
 	\end{scriptsize}
 	
